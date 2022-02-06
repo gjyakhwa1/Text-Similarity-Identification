@@ -1,4 +1,3 @@
-from django.http import HttpResponse, JsonResponse
 from django.shortcuts import render
 
 from rest_framework.decorators import api_view
@@ -7,6 +6,7 @@ from rest_framework.response import Response
 from .helper import cleanText, similaritySearch
 from .models import Question
 from .serializers import QuestionSerializer
+
 
 # Create your views here.
 
@@ -25,8 +25,8 @@ def queryQuestion(request):
         ques = cleanText(queryQuestion)
         similarQuesId = similaritySearch(ques)
         similarQuesId = similarQuesId+1
-        similarQuestion = Question.objects.filter(pk__in=similarQuesId)
-        serializeQuestion = QuestionSerializer(similarQuestion, many=True)
+        similarLst = [Question.objects.get(pk=i) for i in similarQuesId]
+        serializeQuestion = QuestionSerializer(similarLst, many=True)
         return Response(serializeQuestion.data)
 
 

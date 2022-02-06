@@ -15,9 +15,11 @@ function getCookie(name) {
 }
 const csrftoken = getCookie("csrftoken");
 
-document.getElementById("form-wrapper").addEventListener("submit", (e) => {
-  e.preventDefault();
-  getSimilarQuestions().then((data) => {
+document
+  .getElementById("form-wrapper")
+  .addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const data = await getSimilarQuestions();
     console.log(data);
     var ulwrapper = document.getElementById("ques-list");
     ulwrapper.innerHTML = "";
@@ -26,7 +28,6 @@ document.getElementById("form-wrapper").addEventListener("submit", (e) => {
       ulwrapper.innerHTML += item;
     }
   });
-});
 async function getSimilarQuestions() {
   var queryUrl = "http://127.0.0.1:8000/api/queryQuestion/";
   var text = document.getElementById("queryQuestion").value;
