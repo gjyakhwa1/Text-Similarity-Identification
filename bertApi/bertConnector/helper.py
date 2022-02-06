@@ -47,7 +47,7 @@ def indexing():  # function to serialize index done in colab
 
 
 def loadIndex():
-    filepath = './serializedIndex'
+    filepath = './pickle_files/serializedIndex'
     indexFile = open(filepath, 'rb')
     serializedIndex = pickle.load(indexFile)
     indexFile.close()
