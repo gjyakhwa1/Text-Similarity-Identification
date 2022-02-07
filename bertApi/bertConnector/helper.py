@@ -54,13 +54,23 @@ def loadIndex():
     return faiss.deserialize_index(serializedIndex)
 
 
+def initializeModel():
+    print("Model Loading started")
+    global model, index, count
+    time.sleep(20)
+    model = loadModel()
+    index = loadIndex()
+    count = 1
+    print("Model loading ended")
+
+
+def getCount():
+    global count
+    return count
+
+
 def similaritySearch(text):
     # storeModel() #-run only oncel to pickling the model
-    global model, count, index, sentence_embeddings
-    if count == 0:
-        model = loadModel()
-        index = loadIndex()
-        count += 1
     k = 4  # number of similar vector
     xq = model.encode([text])  # query text
     D, I = index.search(xq, k)
