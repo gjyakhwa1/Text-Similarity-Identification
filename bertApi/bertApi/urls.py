@@ -18,7 +18,14 @@ from django.urls import path, include
 from django.conf.urls.static import static
 from django.conf import settings
 
+from bertConnector.helper import initializeModel
+import threading
+
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('bertConnector.urls'))
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+
+# kam chalau chiz ho yo chai
+t1 = threading.Thread(target=initializeModel)
+t1.start()
