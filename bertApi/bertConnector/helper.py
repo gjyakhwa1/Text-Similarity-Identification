@@ -4,7 +4,6 @@ import pandas as pd
 import numpy as np
 from sentence_transformers import SentenceTransformer
 import pickle
-import time
 
 model = None
 count = 0
@@ -57,7 +56,6 @@ def loadIndex():
 def initializeModel():
     print("Model Loading started")
     global model, index, count
-    time.sleep(20)
     model = loadModel()
     index = loadIndex()
     count = 1
