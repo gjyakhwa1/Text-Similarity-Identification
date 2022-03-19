@@ -33,8 +33,6 @@ SECRET_KEY = os.environ['SECRET_KEY']
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
-
 
 # Application definition
 
@@ -47,10 +45,13 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'bertConnector.apps.BertconnectorConfig',
     'rest_framework',
-    'import_export'
+    'import_export',
+    'corsheaders',
+    'bertApi'
 ]
 
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -80,7 +81,14 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'bertApi.wsgi.application'
+CORS_ORIGIN_WHITELIST = [
+    'http://localhost:3000',
+]
+CSRF_TRUSTED_ORIGINS = ['http://localhost:3000']
 
+# CORS_ORIGIN_ALLOW_ALL = True
+
+ALLOWED_HOSTS = ['http://localhost:3000','127.0.0.1']
 
 # Database
 # https://docs.djangoproject.com/en/4.0/ref/settings/#databases

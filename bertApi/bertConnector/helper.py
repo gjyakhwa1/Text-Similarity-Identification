@@ -3,7 +3,9 @@ import faiss
 import pandas as pd
 import numpy as np
 from sentence_transformers import SentenceTransformer
+from sklearn.metrics.pairwise import cosine_similarity
 import pickle
+import time
 
 model = None
 count = 0
@@ -56,6 +58,7 @@ def loadIndex():
 def initializeModel():
     print("Model Loading started")
     global model, index, count
+    time.sleep(5)
     model = loadModel()
     index = loadIndex()
     count = 1
@@ -75,3 +78,8 @@ def similaritySearch(text):
     #lst = [I[0][idx] for idx, i in enumerate(D[0]) if i < 100]
     # return np.array(lst)
     return I[0]
+
+def getCosineSimilarity(question, result):
+    questionEmbedding = model.encode([question])
+    resultsEmbedding = model.encode([result])
+    return(cosine_similarity(questionEmbedding, resultsEmbedding)[0])
