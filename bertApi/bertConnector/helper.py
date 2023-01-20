@@ -22,14 +22,6 @@ def storeModel():
     modelFile.close()
 
 
-def loadModel():
-    filepath = "./pickle_files/modelFile"
-    modelFile = open(filepath, "rb")
-    ourModel = pickle.load(modelFile)
-    modelFile.close()
-    return ourModel
-
-
 def indexing():  # function to serialize index done in colab
     filepath = './csv_files/sentence_embedding.csv'
     df = pd.read_csv(filepath)
@@ -45,7 +37,17 @@ def indexing():  # function to serialize index done in colab
     indexFile.close()
 
 
+def loadModel():
+    # filepath = "./pickle_files/fine_tuned_model"
+    filepath = "./pickle_files/modelFile"
+    modelFile = open(filepath, "rb")
+    ourModel = pickle.load(modelFile)
+    modelFile.close()
+    return ourModel
+
+
 def loadIndex():
+    # filepath = './pickle_files/fineTuned_serializedIndex'
     filepath = './pickle_files/serializedIndex'
     indexFile = open(filepath, 'rb')
     serializedIndex = pickle.load(indexFile)
@@ -72,6 +74,6 @@ def similaritySearch(text):
     k = 4  # number of similar vector
     xq = model.encode([text])  # query text
     D, I = index.search(xq, k)
-    #lst = [I[0][idx] for idx, i in enumerate(D[0]) if i < 100]
+    # lst = [I[0][idx] for idx, i in enumerate(D[0]) if i < 100]
     # return np.array(lst)
     return I[0]

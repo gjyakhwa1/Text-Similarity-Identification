@@ -13,7 +13,12 @@
       integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3"
       crossorigin="anonymous"
     />
-
+    <style>
+      .uploadContainer {
+        padding: 5px;
+        margin: 10px;
+      }
+    </style>
     <title>BERT</title>
   </head>
   <body>
@@ -25,11 +30,32 @@
           >
           <input type="text" textarea class="form-control" id="queryQuestion" />
         </div>
-        <button type="submit" class="btn btn-primary">Submit</button>
+        <button type="submit" class="btn btn-primary" id="submitQuestion" >
+          Submit
+        </button>
       </form>
     </div>
     <div>
       <ul id="ques-list" class="list-group"></ul>
+    </div>
+    <div id="uploadContainer">
+      <form>
+        <div class="mb-3">
+          <label for="author" class="form-label">Author</label>
+          <input type="text" class="form-control" id="author" />
+          <label for="date" class="form-label">Date</label>
+          <input type="date" class="form-control" id="date" />
+          <label for="document" class="form-label">Upload Document (Txt)</label>
+          <input type="text" class="form-control" id="fileupload" name="fileupload" />
+          <label for="note" class="form-label">Note</label>
+          <input type="text" class="form-control" id="note" name="note" />
+          <label for="documentID" class="form-label">DocumentID</label>
+          <input type="text" class="form-control" id="documentID" name="documentID" />
+          <button type="submit" class="btn btn-primary" style="margin-top: 2px" id="uploadDocument">
+            Upload
+          </button>
+        </div>
+      </form>
     </div>
     <script type="text/javascript" src="{% static 'js/index.js'%}"></script>
     <script

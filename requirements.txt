@@ -42,8 +42,8 @@ tablib==3.2.0
 threadpoolctl==3.0.0
 tokenizers==0.11.4
 toml==0.10.2
-torch==1.10.2
-torchvision==0.11.3
+torch==1.11.0
+torchvision==0.12.0
 tqdm==4.62.3
 transformers==4.16.1
 typing_extensions==4.0.1

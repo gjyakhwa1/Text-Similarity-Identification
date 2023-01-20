@@ -2,10 +2,12 @@ from django.shortcuts import render
 
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
+from rest_framework.parsers import MultiPartParser
 
 from .helper import cleanText, similaritySearch
-from .models import Question
+from .models import Question,UploadDocument,DocumentQuestions
 from .serializers import QuestionSerializer
+import json
 
 
 # Create your views here.
@@ -29,6 +31,19 @@ def queryQuestion(request):
         serializeQuestion = QuestionSerializer(similarLst, many=True)
         return Response(serializeQuestion.data)
 
+@api_view(['POST'])
+def uploadDocument(request):
+    if request.method == "POST":
+        author = request.data.get("author")
+        date = request.data.get("date")
+        documentId=request.data.get("documentId")
+        note= request.data.get("note")
+        sentences=request.data.get("sentences")
+        model_instance =UploadDocument.objects.create(author=author,date=date,documentId=documentId,note=note)
+        for sentence in sentences:
+            DocumentQuestions.objects.create(question=sentence,documentId=model_instance)
+        
+    return render(request, 'bertConnector/indexApi.html')
 
 def index(request):
     return render(request, 'bertConnector/indexApi.html')
