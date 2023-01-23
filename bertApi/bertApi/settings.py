@@ -81,7 +81,10 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'bertApi.wsgi.application'
 
-
+CORS_ORIGIN_ALLOW_ALL = False
+CORS_ORIGIN_WHITELIST = [
+    "http://localhost:3000",
+]
 # Database
 # https://docs.djangoproject.com/en/4.0/ref/settings/#databases
 

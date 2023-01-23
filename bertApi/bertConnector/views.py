@@ -2,12 +2,11 @@ from django.shortcuts import render
 
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
-from rest_framework.parsers import MultiPartParser
 
 from .helper import cleanText, similaritySearch
 from .models import Question,UploadDocument,DocumentQuestions
 from .serializers import QuestionSerializer
-import json
+from django.http import HttpResponse
 
 
 # Create your views here.
@@ -19,6 +18,9 @@ def viewQuestion(request):
     serializeQuestion = QuestionSerializer(questions, many=True)
     return Response(serializeQuestion.data)
 
+@api_view(['GET'])
+def test(request):
+    return HttpResponse("connected",status=200)
 
 @api_view(['POST'])
 def queryQuestion(request):

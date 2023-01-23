@@ -1,4 +1,3 @@
-from email.header import Header
 from .helper import getCount
 from django.http import HttpResponse
 
