@@ -47,6 +47,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'bertConnector.apps.BertconnectorConfig',
     'rest_framework',
+    'rest_framework.authtoken',
     'import_export'
 ]
 
