@@ -56,7 +56,7 @@ document
     document.getElementById("token-result").innerHTML = data.token;
   };
 const getToken = async () =>{
-  var queryUrl = "http://127.0.0.1:8000/api-token-auth/";
+  var queryUrl = "http://127.0.0.1:8000/auth/api-token-auth";
   var username = document.getElementById("username").value;
   var password =document.getElementById("password").value
   settings = {

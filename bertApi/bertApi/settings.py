@@ -46,6 +46,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'bertConnector.apps.BertconnectorConfig',
+    'accounts.apps.AccountsConfig',
     'rest_framework',
     'rest_framework.authtoken',
     'import_export'
