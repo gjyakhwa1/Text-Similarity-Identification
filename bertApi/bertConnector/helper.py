@@ -56,12 +56,13 @@ def loadIndex():
 
 
 def initializeModel():
-    print("Model Loading started")
-    global model, index, count
-    model = loadModel()
-    index = loadIndex()
-    count = 1
-    print("Model loading ended")
+    # print("Model Loading started")
+    # global model, index, count
+    # model = loadModel()
+    # index = loadIndex()
+    # count = 1
+    # print("Model loading ended")
+    pass
 
 
 def getCount():

@@ -4,7 +4,7 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 
 from .helper import cleanText, similaritySearch
-from .models import Question,UploadDocument,DocumentQuestions
+from .models import Question
 from .serializers import QuestionSerializer
 from django.http import HttpResponse
 
@@ -33,19 +33,19 @@ def queryQuestion(request):
         serializeQuestion = QuestionSerializer(similarLst, many=True)
         return Response(serializeQuestion.data)
 
-@api_view(['POST'])
-def uploadDocument(request):
-    if request.method == "POST":
-        author = request.data.get("author")
-        date = request.data.get("date")
-        documentId=request.data.get("documentId")
-        note= request.data.get("note")
-        sentences=request.data.get("sentences")
-        model_instance =UploadDocument.objects.create(author=author,date=date,documentId=documentId,note=note)
-        for sentence in sentences:
-            DocumentQuestions.objects.create(question=sentence,documentId=model_instance)
+# @api_view(['POST'])
+# def uploadDocument(request):
+#     if request.method == "POST":
+#         author = request.data.get("author")
+#         date = request.data.get("date")
+#         documentId=request.data.get("documentId")
+#         note= request.data.get("note")
+#         sentences=request.data.get("sentences")
+#         model_instance =UploadDocument.objects.create(author=author,date=date,documentId=documentId,note=note)
+#         for sentence in sentences:
+#             DocumentQuestions.objects.create(question=sentence,documentId=model_instance)
         
-    return render(request, 'bertConnector/indexApi.html')
+#     return render(request, 'bertConnector/indexApi.html')
 
 def index(request):
     return render(request, 'bertConnector/indexApi.html')

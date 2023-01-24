@@ -4,7 +4,9 @@ from . import views
 
 urlpatterns = [
     path('api-token-auth', rViews.obtain_auth_token),
-    path('register',views.register,name="register-view")
+    path('register',views.register,name="register-view"),
+    path('notapproved',views.displayNotApprovedUser,name="not-approved-user"),
+    path('approveuser',views.approveUser,name="approve-user")
     # path('api-token-auth', views.index),
     
 ]
