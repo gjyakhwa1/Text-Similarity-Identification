@@ -2,7 +2,7 @@ from rest_framework import status
 from rest_framework.decorators import api_view
 from .serializers import RegisterSerializer,CustomUserSerializer
 from rest_framework.response import Response
-from .models import CustomUser
+from django.contrib.auth import get_user_model
 
 @api_view(['POST'])
 def register(request):
@@ -17,14 +17,16 @@ def register(request):
 
 @api_view(['GET'])
 def displayNotApprovedUser(request):
-    users=CustomUser.objects.filter(is_approved=False)
+    User=get_user_model()
+    users=User.objects.filter(is_approved=False)
     users=CustomUserSerializer(users,many=True)
     return Response(users.data)
 
 @api_view(['POST'])
 def approveUser(request):
     if request.method=="POST":
-        user=CustomUser.objects.get(username=request.data['username'])
+        User=get_user_model()
+        user=User.objects.get(username=request.data['username'])
         user.is_approved=True
         user.save()
         return Response({'message':'User approved'})

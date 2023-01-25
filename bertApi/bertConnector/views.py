@@ -8,6 +8,11 @@ from .models import Question
 from .serializers import QuestionSerializer
 from django.http import HttpResponse
 
+from rest_framework.decorators import authentication_classes, permission_classes
+from rest_framework.authentication import TokenAuthentication
+from rest_framework.permissions import IsAuthenticated
+
+
 
 # Create your views here.
 
@@ -46,6 +51,13 @@ def queryQuestion(request):
 #             DocumentQuestions.objects.create(question=sentence,documentId=model_instance)
         
 #     return render(request, 'bertConnector/indexApi.html')
+
+
+@api_view(['GET'])
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
+def apiTest(request):
+    return Response({"message":"visible"})
 
 def index(request):
     return render(request, 'bertConnector/indexApi.html')

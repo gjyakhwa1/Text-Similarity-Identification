@@ -119,7 +119,8 @@ AUTH_PASSWORD_VALIDATORS = [
 
 REST_FRAMEWORK = {
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
-    'PAGE_SIZE': 10
+    'PAGE_SIZE': 10,
+    
 }
 
 # Internationalization
@@ -134,6 +135,11 @@ USE_I18N = True
 USE_TZ = True
 
 AUTH_PROFILE_MODULE = 'accounts.CustomUser'
+AUTH_USER_MODEL='accounts.CustomUser'
+AUTHENTICATION_BACKENDS = [
+    'accounts.backend.MyAuthBackend',
+    'django.contrib.auth.backends.ModelBackend',
+]
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.0/howto/static-files/
 
