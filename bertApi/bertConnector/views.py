@@ -33,7 +33,7 @@ def queryQuestion(request):
         queryQuestion = request.data['queryQuestion']
         ques = cleanText(queryQuestion)
         similarQuesId = similaritySearch(ques)
-        similarQuesId = similarQuesId+1
+        similarQuesId = similarQuesId+10043
         similarLst = [Question.objects.get(pk=i) for i in similarQuesId]
         serializeQuestion = QuestionSerializer(similarLst, many=True)
         return Response(serializeQuestion.data)

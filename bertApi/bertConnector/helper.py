@@ -39,7 +39,7 @@ def indexing():  # function to serialize index done in colab
 
 def loadModel():
     # filepath = "./pickle_files/fine_tuned_model"
-    filepath = "./pickle_files/modelFile"
+    filepath = "./pickle_files/modelTest"
     modelFile = open(filepath, "rb")
     ourModel = pickle.load(modelFile)
     modelFile.close()
@@ -48,7 +48,7 @@ def loadModel():
 
 def loadIndex():
     # filepath = './pickle_files/fineTuned_serializedIndex'
-    filepath = './pickle_files/serializedIndex'
+    filepath = './pickle_files/serializedIndex02'
     indexFile = open(filepath, 'rb')
     serializedIndex = pickle.load(indexFile)
     indexFile.close()
@@ -56,13 +56,12 @@ def loadIndex():
 
 
 def initializeModel():
-    # print("Model Loading started")
-    # global model, index, count
-    # model = loadModel()
-    # index = loadIndex()
-    # count = 1
-    # print("Model loading ended")
-    pass
+    print("Model Loading started")
+    global model, index, count
+    model = loadModel()
+    index = loadIndex()
+    count = 1
+    print("Model loading ended")
 
 
 def getCount():

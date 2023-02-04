@@ -30,3 +30,8 @@ def approveUser(request):
         user.is_approved=True
         user.save()
         return Response({'message':'User approved'})
+
+@api_view(['GET'])
+def getToken(request):
+    if request.method == "GET":
+        print(request.user)
