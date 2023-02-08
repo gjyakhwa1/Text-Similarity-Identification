@@ -57,7 +57,7 @@
         </div>
       </form>
     </div> -->
-    <div id="signinContainer">
+    <!-- <div id="signinContainer">
       <form>
         <div class="mb-3">
           <label for="username" class="form-label">Username</label>
@@ -69,7 +69,28 @@
           </button>
         </div>
       </form>
-    </div>
+    </div> -->
+    {% if request.user.is_authenticated %}
+        <p>Welcome, {{ request.user.username }}!</p>
+        <form action="{% url 'logoutUser' %}" method="post">
+          {% csrf_token %}
+          <input type="submit" value="Logout">
+        </form>
+        
+    {% else %}
+    <form action="{% url 'loginUser' %}" method="post">
+      {% csrf_token %}
+      <div class="mb-3">
+        <label for="username" class="form-label">Username</label>
+        <input type="text" class="form-control" id="username" />
+        <label for="password" class="form-label">Password</label>
+        <input type="password" class="form-control" id="password" />
+        <button type="submit" class="btn btn-primary" style="margin-top: 2px" id="loginUser">
+          Login
+        </button>
+      </div>
+    </form>
+    {% endif %}
     <div id="token-result"></div>
     <script type="text/javascript" src="{% static 'js/index.js'%}"></script>
     <script

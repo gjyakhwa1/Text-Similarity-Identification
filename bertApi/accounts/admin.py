@@ -1,7 +1,6 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
-from django.contrib.auth.models import User
-from .models import CustomUser
+from .models import CustomUser,LoginHistory
 
 class CustomUserAdmin(UserAdmin):
     list_display = ('username', 'email', 'is_staff', 'is_approved')
@@ -12,4 +11,8 @@ class CustomUserAdmin(UserAdmin):
         ('Important dates', {'fields': ('last_login', 'date_joined')}),
     )
 
+class CustomLoginHistory(admin.ModelAdmin):
+    readonly_fields =('login_at',)
+
 admin.site.register(CustomUser, CustomUserAdmin)
+admin.site.register(LoginHistory,CustomLoginHistory)

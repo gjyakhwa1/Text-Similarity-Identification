@@ -1,8 +1,10 @@
 from rest_framework import status
-from rest_framework.decorators import api_view
-from .serializers import RegisterSerializer,CustomUserSerializer
+from rest_framework.decorators import api_view,authentication_classes, permission_classes
+from django.contrib.auth import get_user_model, authenticate, login, logout
+from .serializers import RegisterSerializer,CustomUserSerializer,LoginHistorySerializer
 from rest_framework.response import Response
-from django.contrib.auth import get_user_model
+from .models import LoginHistory
+from django.utils import timezone
 
 @api_view(['POST'])
 def register(request):
@@ -31,7 +33,27 @@ def approveUser(request):
         user.save()
         return Response({'message':'User approved'})
 
+@api_view(['POST'])
+def loginUser(request):
+    if request.method=="POST":
+        user=authenticate(username=request.data['username'],password=request.data['password'])
+        if user is not None:
+            login(request,user)
+            LoginHistory.objects.create(user=user)
+            return Response({"LoginStatus":"Login"})
+    return Response({"LoginStatus":"Can not login"})
+
+@api_view(['POST'])
+def logoutUser(request):
+    if request.method=="POST":
+        logout(request._request)
+        loginHistory=LoginHistory.objects.filter(user= request.user).last()
+        loginHistory.logout_at=timezone.now()
+        loginHistory.save()
+        return Response({"LoginStatus":"User has logout"})
+
 @api_view(['GET'])
-def getToken(request):
-    if request.method == "GET":
-        print(request.user)
+def userHistoryAll(request):
+    history=LoginHistory.objects.all()
+    serializer=LoginHistorySerializer(history,many=True)
+    return Response({'loginHistory':serializer})

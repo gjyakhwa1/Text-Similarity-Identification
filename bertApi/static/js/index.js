@@ -48,6 +48,26 @@ async function getSimilarQuestions() {
   var data = await response.json();
   return data;
 }
+
+document.getElementById("loginUser").onclick= async(e)=>{
+  e.preventDefault();
+  var queryUrl = "http://127.0.0.1:8000/auth/login";
+  var username = document.getElementById("username").value;
+  var password =document.getElementById("password").value
+  settings = {
+    method: "POST",
+    headers: {
+      "Content-type": "application/json",
+      "X-CSRFToken": csrftoken,
+    },
+    body: JSON.stringify({
+      username: username,
+      password:password
+    }),
+  };
+  response = await fetch(queryUrl, settings);
+}
+
 document
   .getElementById("tokenGenerator")
   .onclick=async (e) => {
