@@ -8,6 +8,5 @@ urlpatterns = [
     path('api/question/', views.viewQuestion, name="view-question"),
     path('api/queryQuestion/', views.queryQuestion, name="query-question"),
     path('api/test/', views.test, name="test"),
-    path('api/apiTest/',views.apiTest)
     # path('api/uploadDocument/',views.uploadDocument,name="upload-document")
 ]
