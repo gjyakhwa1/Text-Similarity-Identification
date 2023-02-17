@@ -1,5 +1,5 @@
 from django.db import models
-
+from accounts.models import CustomUser
 # Create your models here.
 
 
@@ -11,6 +11,14 @@ class Question(models.Model):
 
     def __str__(self):
         return self.question
+
+class QuestionCountHistory(models.Model):
+    user = models.ForeignKey(CustomUser,on_delete=models.CASCADE)
+    date=models.DateField()
+    count=models.IntegerField(default=0)
+    def __str__(self):
+        return self.user.username
+
 # class UploadDocument(models.Model):
 #     author = models.CharField(blank=False,max_length=100)
 #     date = models.DateField(blank=False)

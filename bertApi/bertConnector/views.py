@@ -4,7 +4,7 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 
 from .helper import cleanText, similaritySearch
-from .models import Question
+from .models import Question,QuestionCountHistory
 from .serializers import QuestionSerializer
 from django.http import HttpResponse
 
@@ -12,7 +12,10 @@ from rest_framework.decorators import authentication_classes, permission_classes
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import IsAuthenticated
 
+from rest_framework.authtoken.models import Token
+from accounts.models import CustomUser
 
+from datetime import date
 
 # Create your views here.
 
@@ -34,6 +37,17 @@ def queryQuestion(request):
     if request.method == 'POST':
         queryQuestion = request.data['queryQuestion']
         ques = cleanText(queryQuestion)
+        token_key = request.auth
+        token = Token.objects.get(key=token_key)
+        user = token.user
+        history=None
+        try:
+            history=QuestionCountHistory.objects.get(user=user,date=date.today())   
+        except QuestionCountHistory.DoesNotExist:
+            history=QuestionCountHistory.objects.create(user=user,date=date.today())
+        # print("---------------",history)
+        history.count+=1
+        history.save()
         similarQuesId = similaritySearch(ques)
         similarQuesId = similarQuesId+10043
         similarLst = [Question.objects.get(pk=i) for i in similarQuesId]
