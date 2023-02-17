@@ -45,7 +45,7 @@ class RegisterSerializer(serializers.ModelSerializer):
 class CustomUserSerializer(serializers.ModelSerializer):
     class Meta:
         model = get_user_model()
-        fields = ('id','username', 'email', 'approvalStatus')
+        fields = ('id','username', 'email', 'approvalStatus','is_superuser')
 
 class LoginHistorySerializer(serializers.ModelSerializer):
     user = CustomUserSerializer(read_only=True)

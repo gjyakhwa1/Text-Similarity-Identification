@@ -23,6 +23,14 @@ def register(request):
 @api_view(['GET'])
 @authentication_classes([TokenAuthentication])
 @permission_classes([IsAuthenticated])
+def displayAllUser(request):
+    users=get_user_model().objects.all()
+    data = CustomUserSerializer(users,many=True)
+    return Response(data.data)
+
+@api_view(['GET'])
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
 def displayNotApprovedUser(request):
     User=get_user_model()
     users=User.objects.filter(approvalStatus="Pending")
