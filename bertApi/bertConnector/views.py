@@ -66,13 +66,5 @@ def queryQuestion(request):
 #             DocumentQuestions.objects.create(question=sentence,documentId=model_instance)
         
 #     return render(request, 'bertConnector/indexApi.html')
-
-
-@api_view(['GET'])
-@authentication_classes([TokenAuthentication])
-@permission_classes([IsAuthenticated])
-def apiTest(request):
-    return Response({"message":"visible"})
-
 def index(request):
     return render(request, 'bertConnector/indexApi.html')

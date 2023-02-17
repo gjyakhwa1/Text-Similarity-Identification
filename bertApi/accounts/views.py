@@ -7,7 +7,6 @@ from .models import LoginHistory
 from django.utils import timezone
 from rest_framework.authtoken.models import Token
 from rest_framework.authentication import TokenAuthentication
-from rest_framework.permissions import IsAuthenticated
 
 @api_view(['POST'])
 def register(request):
@@ -63,6 +62,10 @@ def loginUser(request):
             # login(request,user)
             token,_ = Token.objects.get_or_create(user=user)
             userSerializer=CustomUserSerializer(user)
+            loginHistory=LoginHistory.objects.filter(user= user).last()
+            if loginHistory.logout_at is None:
+                loginHistory.logout_at=timezone.now()
+                loginHistory.save()
             LoginHistory.objects.create(user=user)
             return Response({"LoginStatus":"Login","Token":token.key,"user":userSerializer.data})
     return Response({"LoginStatus":"Can not login"})
