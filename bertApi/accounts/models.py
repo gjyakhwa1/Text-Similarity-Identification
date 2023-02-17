@@ -2,7 +2,12 @@ from django.contrib.auth.models import AbstractUser,Group,Permission
 from django.db import models
 
 class CustomUser(AbstractUser):
-    is_approved = models.BooleanField(default=False)
+    APPROVAL_CHOICES = (
+        ('Pending', 'Pending'),
+        ('Approved', 'Approved'),
+        ('Rejected', 'Rejected'),
+    )
+    approvalStatus = models.CharField(default="Pending",max_length=15,choices=APPROVAL_CHOICES)
 
 class LoginHistory(models.Model):
     user=models.ForeignKey(CustomUser,on_delete=models.CASCADE)

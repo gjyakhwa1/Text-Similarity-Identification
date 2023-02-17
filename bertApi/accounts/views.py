@@ -5,6 +5,9 @@ from .serializers import RegisterSerializer,CustomUserSerializer,LoginHistorySer
 from rest_framework.response import Response
 from .models import LoginHistory
 from django.utils import timezone
+from rest_framework.authtoken.models import Token
+from rest_framework.authentication import TokenAuthentication
+from rest_framework.permissions import IsAuthenticated
 
 @api_view(['POST'])
 def register(request):
@@ -18,41 +21,62 @@ def register(request):
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 @api_view(['GET'])
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
 def displayNotApprovedUser(request):
     User=get_user_model()
-    users=User.objects.filter(is_approved=False)
+    users=User.objects.filter(approvalStatus="Pending")
     users=CustomUserSerializer(users,many=True)
     return Response(users.data)
 
 @api_view(['POST'])
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
 def approveUser(request):
     if request.method=="POST":
         User=get_user_model()
-        user=User.objects.get(username=request.data['username'])
-        user.is_approved=True
+        user=User.objects.get(id=request.data['id'])
+        user.approvalStatus="Approved"
         user.save()
         return Response({'message':'User approved'})
+
+@api_view(['POST'])
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
+def rejectUser(request):
+    if request.method=="POST":
+        User=get_user_model()
+        user=User.objects.get(id=request.data['id'])
+        user.approvalStatus="Rejected"
+        user.save()
+        return Response({'message':'User Rejected'})
 
 @api_view(['POST'])
 def loginUser(request):
     if request.method=="POST":
         user=authenticate(username=request.data['username'],password=request.data['password'])
         if user is not None:
-            login(request,user)
+            # login(request,user)
+            token,_ = Token.objects.get_or_create(user=user)
+            userSerializer=CustomUserSerializer(user)
             LoginHistory.objects.create(user=user)
-            return Response({"LoginStatus":"Login"})
+            return Response({"LoginStatus":"Login","Token":token.key,"user":userSerializer.data})
     return Response({"LoginStatus":"Can not login"})
 
 @api_view(['POST'])
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
 def logoutUser(request):
     if request.method=="POST":
-        logout(request._request)
+        # logout(request._request)
         loginHistory=LoginHistory.objects.filter(user= request.user).last()
         loginHistory.logout_at=timezone.now()
         loginHistory.save()
         return Response({"LoginStatus":"User has logout"})
 
 @api_view(['GET'])
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
 def userHistoryAll(request):
     if request.method=="GET":
         history=LoginHistory.objects.all()
@@ -60,6 +84,8 @@ def userHistoryAll(request):
         return Response({'loginHistory':serializer.data})
 
 @api_view(['GET'])
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
 def userHistory(request,user_id):
     if request.method == "GET":
         history = LoginHistory.objects.filter(user=user_id)

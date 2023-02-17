@@ -7,6 +7,7 @@ urlpatterns = [
     path('register',views.register,name="register-view"),
     path('notapproved',views.displayNotApprovedUser,name="not-approved-user"),
     path('approveuser',views.approveUser,name="approve-user"),
+    path('rejectuser',views.rejectUser,name="reject-user"),
     path('login',views.loginUser,name="loginUser"),
     path('logout',views.logoutUser,name='logoutUser'),
     path('userHistory',views.userHistoryAll,name="user-history-all"),
