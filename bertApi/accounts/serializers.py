@@ -2,6 +2,7 @@ from rest_framework import serializers
 from rest_framework.validators import UniqueValidator
 from django.contrib.auth.password_validation import validate_password
 from django.contrib.auth import get_user_model
+from .models import LoginHistory
 
 class RegisterSerializer(serializers.ModelSerializer):
     User=get_user_model()
@@ -44,5 +45,11 @@ class RegisterSerializer(serializers.ModelSerializer):
 class CustomUserSerializer(serializers.ModelSerializer):
     class Meta:
         model = get_user_model()
-        fields = ('username', 'email')
+        fields = ('username', 'email', 'is_approved')
+
+class LoginHistorySerializer(serializers.ModelSerializer):
+    user = CustomUserSerializer(read_only=True)
+    class Meta:
+        model=LoginHistory()
+        fields=('user','login_at','logout_at')
 

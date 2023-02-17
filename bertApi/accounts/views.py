@@ -54,6 +54,14 @@ def logoutUser(request):
 
 @api_view(['GET'])
 def userHistoryAll(request):
-    history=LoginHistory.objects.all()
-    serializer=LoginHistorySerializer(history,many=True)
-    return Response({'loginHistory':serializer})
+    if request.method=="GET":
+        history=LoginHistory.objects.all()
+        serializer=LoginHistorySerializer(history,many=True)
+        return Response({'loginHistory':serializer.data})
+
+@api_view(['GET'])
+def userHistory(request,user_id):
+    if request.method == "GET":
+        history = LoginHistory.objects.filter(user=user_id)
+        serializer = LoginHistorySerializer(history,many=True)
+        return Response({'loginHistory':serializer.data})

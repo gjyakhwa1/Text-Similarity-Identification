@@ -9,5 +9,6 @@ urlpatterns = [
     path('approveuser',views.approveUser,name="approve-user"),
     path('login',views.loginUser,name="loginUser"),
     path('logout',views.logoutUser,name='logoutUser'),
-    path('userHistory',views.userHistoryAll,name="user-history")
+    path('userHistory',views.userHistoryAll,name="user-history-all"),
+    path('userHistory/<int:user_id>',views.userHistory,name='user-history')
 ]
