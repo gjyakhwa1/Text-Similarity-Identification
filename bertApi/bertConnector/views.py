@@ -32,7 +32,6 @@ def test(request):
 
 @api_view(['POST'])
 @authentication_classes([TokenAuthentication])
-@permission_classes([IsAuthenticated])
 def queryQuestion(request):
     if request.method == 'POST':
         queryQuestion = request.data['queryQuestion']

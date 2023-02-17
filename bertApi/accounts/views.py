@@ -22,7 +22,6 @@ def register(request):
 
 @api_view(['GET'])
 @authentication_classes([TokenAuthentication])
-@permission_classes([IsAuthenticated])
 def displayAllUser(request):
     users=get_user_model().objects.all()
     data = CustomUserSerializer(users,many=True)
@@ -30,7 +29,6 @@ def displayAllUser(request):
 
 @api_view(['GET'])
 @authentication_classes([TokenAuthentication])
-@permission_classes([IsAuthenticated])
 def displayNotApprovedUser(request):
     User=get_user_model()
     users=User.objects.filter(approvalStatus="Pending")
@@ -39,7 +37,6 @@ def displayNotApprovedUser(request):
 
 @api_view(['POST'])
 @authentication_classes([TokenAuthentication])
-@permission_classes([IsAuthenticated])
 def approveUser(request):
     if request.method=="POST":
         User=get_user_model()
@@ -50,7 +47,6 @@ def approveUser(request):
 
 @api_view(['POST'])
 @authentication_classes([TokenAuthentication])
-@permission_classes([IsAuthenticated])
 def rejectUser(request):
     if request.method=="POST":
         User=get_user_model()
@@ -73,18 +69,19 @@ def loginUser(request):
 
 @api_view(['POST'])
 @authentication_classes([TokenAuthentication])
-@permission_classes([IsAuthenticated])
 def logoutUser(request):
     if request.method=="POST":
         # logout(request._request)
-        loginHistory=LoginHistory.objects.filter(user= request.user).last()
+        token_key = request.auth
+        token = Token.objects.get(key=token_key)
+        user = token.user
+        loginHistory=LoginHistory.objects.filter(user= user).last()
         loginHistory.logout_at=timezone.now()
         loginHistory.save()
         return Response({"LoginStatus":"User has logout"})
 
 @api_view(['GET'])
 @authentication_classes([TokenAuthentication])
-@permission_classes([IsAuthenticated])
 def userHistoryAll(request):
     if request.method=="GET":
         history=LoginHistory.objects.all()
@@ -93,7 +90,6 @@ def userHistoryAll(request):
 
 @api_view(['GET'])
 @authentication_classes([TokenAuthentication])
-@permission_classes([IsAuthenticated])
 def userHistory(request,user_id):
     if request.method == "GET":
         history = LoginHistory.objects.filter(user=user_id)
