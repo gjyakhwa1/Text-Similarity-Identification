@@ -33,7 +33,6 @@ SECRET_KEY = os.environ['SECRET_KEY']
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
 
 
 # Application definition
@@ -46,11 +45,15 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'bertConnector.apps.BertconnectorConfig',
+    'accounts.apps.AccountsConfig',
     'rest_framework',
-    'import_export'
+    'rest_framework.authtoken',
+    'import_export',
+    "corsheaders",
 ]
 
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -81,7 +84,12 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'bertApi.wsgi.application'
 
-
+# CORS_ORIGIN_ALLOW_ALL = False
+CORS_ORIGIN_WHITELIST = [
+    'http://localhost:3000',
+]
+CSRF_TRUSTED_ORIGINS = ['http://localhost:3000']
+ALLOWED_HOSTS = ['http://localhost:3000','127.0.0.1']
 # Database
 # https://docs.djangoproject.com/en/4.0/ref/settings/#databases
 
@@ -114,7 +122,8 @@ AUTH_PASSWORD_VALIDATORS = [
 
 REST_FRAMEWORK = {
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
-    'PAGE_SIZE': 10
+    'PAGE_SIZE': 10,
+    
 }
 
 # Internationalization
@@ -128,7 +137,12 @@ USE_I18N = True
 
 USE_TZ = True
 
-
+AUTH_PROFILE_MODULE = 'accounts.CustomUser'
+AUTH_USER_MODEL='accounts.CustomUser'
+AUTHENTICATION_BACKENDS = [
+    'accounts.backend.MyAuthBackend',
+    'django.contrib.auth.backends.ModelBackend',
+]
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.0/howto/static-files/
 
