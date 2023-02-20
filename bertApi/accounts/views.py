@@ -1,12 +1,14 @@
 from rest_framework import status
-from rest_framework.decorators import api_view,authentication_classes, permission_classes
-from django.contrib.auth import get_user_model, authenticate, login, logout
-from .serializers import RegisterSerializer,CustomUserSerializer,LoginHistorySerializer
-from rest_framework.response import Response
-from .models import LoginHistory
-from django.utils import timezone
+from rest_framework.decorators import api_view,authentication_classes
 from rest_framework.authtoken.models import Token
 from rest_framework.authentication import TokenAuthentication
+from rest_framework.response import Response
+
+from django.utils import timezone
+from django.contrib.auth import get_user_model, authenticate
+
+from .serializers import RegisterSerializer,CustomUserSerializer,LoginHistorySerializer
+from .models import LoginHistory
 
 @api_view(['POST'])
 def register(request):
