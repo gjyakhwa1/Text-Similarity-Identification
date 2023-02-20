@@ -22,9 +22,18 @@ def register(request):
 @api_view(['GET'])
 @authentication_classes([TokenAuthentication])
 def displayAllUser(request):
-    users=get_user_model().objects.all()
+    users=get_user_model.objects.all()
     data = CustomUserSerializer(users,many=True)
     return Response(data.data)
+
+@api_view(['GET'])
+@authentication_classes([TokenAuthentication])
+def userProfile(request,user_id):
+    if request.method == "GET":
+        User=get_user_model()
+        queryUser = User.objects.filter(id=user_id)
+        serializer = CustomUserSerializer(queryUser,many=True)
+        return Response({'queryUser':serializer.data})
 
 @api_view(['GET'])
 @authentication_classes([TokenAuthentication])
@@ -67,8 +76,8 @@ def loginUser(request):
                 loginHistory.logout_at=timezone.now()
                 loginHistory.save()
             LoginHistory.objects.create(user=user)
-            return Response({"LoginStatus":"Login","Token":token.key,"user":userSerializer.data})
-    return Response({"LoginStatus":"Can not login"})
+            return Response({"loginStatus":"Login","token":token.key,"user":userSerializer.data})
+    return Response({"loginStatus":"Can not login"})
 
 @api_view(['POST'])
 @authentication_classes([TokenAuthentication])
@@ -81,7 +90,7 @@ def logoutUser(request):
         loginHistory=LoginHistory.objects.filter(user= user).last()
         loginHistory.logout_at=timezone.now()
         loginHistory.save()
-        return Response({"LoginStatus":"User has logout"})
+        return Response({"loginStatus":"User has logout"})
 
 @api_view(['GET'])
 @authentication_classes([TokenAuthentication])
