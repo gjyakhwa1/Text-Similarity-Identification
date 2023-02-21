@@ -6,9 +6,9 @@ from rest_framework.response import Response
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.authtoken.models import Token
 
-from .helper import cleanText, similaritySearch
 from accounts.helper import getWeeklyQueryData
 from accounts.helper import getHighestQueryUsers
+from .helper import cleanText, similaritySearch, switchAlgorithm
 from .models import Question, QuestionCountHistory
 from .serializers import QuestionSerializer
 
@@ -33,6 +33,7 @@ def test(request):
 @api_view(["POST"])
 @authentication_classes([TokenAuthentication])
 def queryQuestion(request):
+    global model, vectorIndex
     if request.method == "POST":
         queryQuestion = request.data["queryQuestion"]
         ques = cleanText(queryQuestion)
@@ -87,6 +88,14 @@ def weeklyQueryCount(request,user_id):
         endDate = request.data['endDate']
         data = getWeeklyQueryData(startDate,endDate,user_id)
         return Response(data)
+
+@api_view(['POST'])
+@authentication_classes([TokenAuthentication])
+def switchAlgo(request):
+    if request.method=="POST":
+        algorithm = request.data['algorithm']
+        switchAlgorithm(algorithm)
+        return Response({"status":"Algorithm Switched Successfully"})
 
 # @api_view(['POST'])
 # def uploadDocument(request):

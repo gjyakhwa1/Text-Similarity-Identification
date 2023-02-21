@@ -5,10 +5,11 @@ import numpy as np
 from sentence_transformers import SentenceTransformer
 import pickle
 
-model = None
+from .algorithms import Runtime
+
 count = 0
-index = None
 sentence_embeddings = None
+runTime=None
 
 
 def cleanText(text):
@@ -54,12 +55,10 @@ def loadIndex():
     indexFile.close()
     return faiss.deserialize_index(serializedIndex)
 
-
 def initializeModel():
     print("Model Loading started")
-    global model, index, count
-    model = loadModel()
-    index = loadIndex()
+    global runTime, count
+    runTime =Runtime()
     count = 1
     print("Model loading ended")
 
@@ -68,12 +67,12 @@ def getCount():
     global count
     return count
 
-
 def similaritySearch(text):
-    # storeModel() #-run only oncel to pickling the model
-    k = 4  # number of similar vector
-    xq = model.encode([text])  # query text
-    D, I = index.search(xq, k)
-    # lst = [I[0][idx] for idx, i in enumerate(D[0]) if i < 100]
-    # return np.array(lst)
-    return I[0]
+    return runTime.similaritySearch(text)
+
+def switchAlgorithm(algo):
+    global runTime,count
+    print("Algorithm is switching")
+    runTime.switch_algo(algo)
+    print("Algorithm Switched")
+
