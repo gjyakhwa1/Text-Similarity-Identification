@@ -110,3 +110,5 @@ def userHistory(request,user_id):
         history = LoginHistory.objects.filter(user=user_id)
         serializer = LoginHistorySerializer(history,many=True)
         return Response({'loginHistory':serializer.data})
+
+

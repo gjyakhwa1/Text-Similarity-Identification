@@ -8,6 +8,7 @@ class CustomUser(AbstractUser):
         ('Rejected', 'Rejected'),
     )
     approvalStatus = models.CharField(default="Pending",max_length=15,choices=APPROVAL_CHOICES)
+    totalQueryQuestion = models.IntegerField(default=0)
 
 class LoginHistory(models.Model):
     user=models.ForeignKey(CustomUser,on_delete=models.CASCADE)
