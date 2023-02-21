@@ -6,7 +6,10 @@ from import_export.admin import ImportExportModelAdmin
 
 @admin.register(Question)
 class ViewAdmin(ImportExportModelAdmin):
-    list_display = ["id", "question"]
+    list_display = ["id", "question",]
     from_encoding = 'utf-8'
 
-admin.site.register(QuestionCountHistory)
+class CustomQuestionCountHistory(admin.ModelAdmin):
+    readonly_fields =('updated_at',)
+    
+admin.site.register(QuestionCountHistory,CustomQuestionCountHistory)

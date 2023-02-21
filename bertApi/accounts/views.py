@@ -9,6 +9,7 @@ from django.contrib.auth import get_user_model, authenticate
 
 from .serializers import RegisterSerializer,CustomUserSerializer,LoginHistorySerializer
 from .models import LoginHistory
+from .helper import getLogoutTime
 
 @api_view(['POST'])
 def register(request):
@@ -75,7 +76,7 @@ def loginUser(request):
             userSerializer=CustomUserSerializer(user)
             loginHistory=LoginHistory.objects.filter(user= user).last()
             if loginHistory.logout_at is None:
-                loginHistory.logout_at=timezone.now()
+                loginHistory.logout_at=getLogoutTime(user)
                 loginHistory.save()
             LoginHistory.objects.create(user=user)
             return Response({"loginStatus":"Login","token":token.key,"user":userSerializer.data})

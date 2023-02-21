@@ -16,6 +16,7 @@ class QuestionCountHistory(models.Model):
     user = models.ForeignKey(CustomUser,on_delete=models.CASCADE)
     date=models.DateField()
     count=models.IntegerField(default=0)
+    updated_at = models.DateTimeField(auto_now=True)
     def __str__(self):
         return self.user.username
 
