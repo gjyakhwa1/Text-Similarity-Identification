@@ -6,11 +6,13 @@ from sentence_transformers import SentenceTransformer
 import pickle
 
 from .algorithms import Runtime
+from .models import ServerStatus
+from django.utils import timezone
+
+sentence_embeddings = None
 
 count = 0
-sentence_embeddings = None
 runTime=None
-
 
 def cleanText(text):
     return re.sub(r"[^a-zA-Z0-9\s]", "", text)
@@ -56,10 +58,16 @@ def loadIndex():
     return faiss.deserialize_index(serializedIndex)
 
 def initializeModel():
+    serverStatus = ServerStatus.objects.all().first()
+    serverStatus.isModelLoading =True
+    serverStatus.modelLoadingStatus = 0 
+    serverStatus.startTimeStampModel = timezone.now()
+    serverStatus.currentTimeStampModel = timezone.now()
+    serverStatus.serverUpTime = timezone.now()
+    serverStatus.save()
     print("Model Loading started")
-    global runTime, count
+    global runTime 
     runTime =Runtime()
-    count = 1
     print("Model loading ended")
 
 

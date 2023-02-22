@@ -2,20 +2,33 @@ from encoders.use import UniversalEncoder
 from encoders.bert import BERT
 from enum import Enum
 from .search_index import VectorIndex
-
-
+from .models import ServerStatus
+from django.utils import timezone
 class Algorithm(Enum):
     USE = 1
     BERT = 2
 
+class ModelStatus(Enum):
+    MODEL_LOAD = 0
+    FAISS_LOAD = 1
+    COMPLETE  = 2
 
 class Runtime:
     def __init__(self):
+        global count
+        serverStatus = ServerStatus.objects.all().first()
         self.currentAlgo = Algorithm.BERT
         self.encoder = BERT()
+        serverStatus.modelLoadingStatus = 1
+        serverStatus.currentTimeStampModel = timezone.now()
+        serverStatus.save()
         vectorIndex = VectorIndex()
         vectorIndex.load("./pickle_files/serializedIndex02")
         self.index = vectorIndex
+        serverStatus.modelLoadingStatus = 2
+        serverStatus.currentTimeStampModel = timezone.now()
+        serverStatus.isModelLoading=False
+        serverStatus.save()
         self.encoderType = Algorithm.BERT
 
     # generates new index from uploaded data

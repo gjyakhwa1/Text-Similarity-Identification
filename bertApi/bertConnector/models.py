@@ -1,5 +1,6 @@
 from django.db import models
 from accounts.models import CustomUser
+import datetime
 # Create your models here.
 
 
@@ -19,6 +20,27 @@ class QuestionCountHistory(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
     def __str__(self):
         return self.user.username
+
+AVAILABLE_MODEL_CHOICES = (
+        ('BERT', 'BERT'),
+        ('USE','USE'),
+    )
+class ServerStatus(models.Model):
+    currentModel = models.CharField(max_length=10,default="BERT", choices=AVAILABLE_MODEL_CHOICES)
+    currentQuestionsPath = models.CharField(max_length=50,default="./pickle_files/serializedIndex02")
+    isModelLoading =models.BooleanField(default=False)
+    isQuestionsUpdating = models.BooleanField(default=False)
+    modelLoadingStatus = models.IntegerField(default=0)
+    questionsUpdatingStatus = models.IntegerField(default=0)
+    startTimeStampModel = models.DateTimeField()
+    currentTimeStampModel = models.DateTimeField()
+    startTimeStampQuestions = models.DateTimeField()
+    currentTimeStampQuestions = models.DateTimeField()
+    serverUpTime = models.DateTimeField()
+
+    def __str__(self):
+        return self.currentModel
+
 
 # class UploadDocument(models.Model):
 #     author = models.CharField(blank=False,max_length=100)

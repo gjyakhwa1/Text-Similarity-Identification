@@ -1,6 +1,7 @@
 from django.contrib import admin
-from .models import Question,QuestionCountHistory
+from .models import Question,QuestionCountHistory, ServerStatus
 from import_export.admin import ImportExportModelAdmin
+
 # Register your models here.
 
 
@@ -11,5 +12,7 @@ class ViewAdmin(ImportExportModelAdmin):
 
 class CustomQuestionCountHistory(admin.ModelAdmin):
     readonly_fields =('updated_at',)
+
+admin.site.register(ServerStatus)
     
 admin.site.register(QuestionCountHistory,CustomQuestionCountHistory)
