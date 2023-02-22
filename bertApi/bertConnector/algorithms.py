@@ -15,7 +15,6 @@ class ModelStatus(Enum):
 
 class Runtime:
     def __init__(self):
-        global count
         serverStatus = ServerStatus.objects.all().first()
         self.currentAlgo = Algorithm.BERT
         self.encoder = BERT()

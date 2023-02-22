@@ -1,5 +1,4 @@
 from django.shortcuts import render
-from django.http import HttpResponse
 
 from rest_framework.decorators import api_view, authentication_classes
 from rest_framework.response import Response
@@ -8,9 +7,9 @@ from rest_framework.authtoken.models import Token
 
 from accounts.helper import getWeeklyQueryData
 from accounts.helper import getHighestQueryUsers
-from .helper import cleanText, similaritySearch, switchAlgorithm
-from .models import Question, QuestionCountHistory
-from .serializers import QuestionSerializer
+from .helper import cleanText, similaritySearch, switchAlgorithm, getTimeStamp
+from .models import Question, QuestionCountHistory, ServerStatus
+from .serializers import QuestionSerializer, ServerStatusSerializer
 
 from datetime import date
 
@@ -26,8 +25,13 @@ def viewQuestion(request):
 
 
 @api_view(["GET"])
-def test(request):
-    return HttpResponse("connected", status=200)
+@authentication_classes([TokenAuthentication])
+def getServerStatus(request):
+    data =ServerStatus.objects.all().first()
+    serializeData = ServerStatusSerializer(data)
+    modelTimeStamp = getTimeStamp(serializeData.data["currentTimeStampModel"])-getTimeStamp(serializeData.data["startTimeStampModel"])
+    questionsTimeStamp = getTimeStamp(serializeData.data["currentTimeStampQuestions"])-getTimeStamp(serializeData.data["startTimeStampQuestions"])
+    return Response({"data":serializeData.data,"modelTimeStamp":modelTimeStamp.total_seconds(),"questionsTimeStamp":questionsTimeStamp.total_seconds()}, status=200)
 
 
 @api_view(["POST"])

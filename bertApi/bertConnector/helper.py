@@ -8,10 +8,10 @@ import pickle
 from .algorithms import Runtime
 from .models import ServerStatus
 from django.utils import timezone
+from datetime import datetime
 
 sentence_embeddings = None
 
-count = 0
 runTime=None
 
 def cleanText(text):
@@ -70,17 +70,19 @@ def initializeModel():
     runTime =Runtime()
     print("Model loading ended")
 
-
-def getCount():
-    global count
-    return count
-
 def similaritySearch(text):
     return runTime.similaritySearch(text)
 
 def switchAlgorithm(algo):
-    global runTime,count
+    global runTime
     print("Algorithm is switching")
     runTime.switch_algo(algo)
     print("Algorithm Switched")
+
+def getTimeStamp(value):
+    try:
+        currentTimeStampModel = datetime.strptime(value, '%Y-%m-%dT%H:%M:%S%z')
+    except ValueError:
+        currentTimeStampModel = datetime.strptime(value, '%Y-%m-%dT%H:%M:%S.%f%z')
+    return currentTimeStampModel
 
