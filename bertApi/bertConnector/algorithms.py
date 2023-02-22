@@ -15,20 +15,39 @@ class ModelStatus(Enum):
 
 class Runtime:
     def __init__(self):
+        self.initializer(Algorithm.BERT ,BERT)
+    
+    def initializer(self,model_name,model):
         serverStatus = ServerStatus.objects.all().first()
-        self.currentAlgo = Algorithm.BERT
-        self.encoder = BERT()
-        serverStatus.modelLoadingStatus = 1
+        self.currentAlgo =model_name
+        self.encoder = model()
+        self.encoderType = model_name
+        serverStatus.currentModel = "BERT" if model_name==Algorithm.BERT else "USE"
+        serverStatus.modelLoadingStatus = ModelStatus.FAISS_LOAD.value
         serverStatus.currentTimeStampModel = timezone.now()
         serverStatus.save()
         vectorIndex = VectorIndex()
-        vectorIndex.load("./pickle_files/serializedIndex02")
+        path = serverStatus.currentQuestionsPath
+        vectorIndex.load(path)
         self.index = vectorIndex
-        serverStatus.modelLoadingStatus = 2
+        serverStatus.modelLoadingStatus = ModelStatus.COMPLETE.value
         serverStatus.currentTimeStampModel = timezone.now()
         serverStatus.isModelLoading=False
         serverStatus.save()
-        self.encoderType = Algorithm.BERT
+        
+    def similaritySearch(self,text):
+        encodedQuery = self.encoder.encode(text)
+        return self.index.query(encodedQuery)
+
+    def switch_algo(self, algo: Algorithm):
+        algo =Algorithm[algo]
+        self.currentAlgo = algo
+        if self.encoderType == algo:
+            return
+        elif algo == Algorithm.USE:
+            self.initializer(Algorithm.USE ,UniversalEncoder)
+        elif algo == Algorithm.BERT:
+            self.initializer(Algorithm.BERT ,BERT)
 
     # generates new index from uploaded data
     # def change_index(self, filename):
@@ -43,25 +62,3 @@ class Runtime:
     #     annoy_index.build(embeddings, questions_string)
     #     annoy_index.save("./indices/" + filename + str(self.current_algo) + ".ann")
     #     self.index = annoy_index
-    def similaritySearch(self,text):
-        encodedQuery = self.encoder.encode(text)
-        return self.index.query(encodedQuery)
-
-    def switch_algo(self, algo: Algorithm):
-        algo =Algorithm[algo]
-        self.currentAlgo = algo
-        if self.encoderType == algo:
-            return
-        elif algo == Algorithm.USE:
-            # self.encoder = UniversalEncoder()
-            self.encoder =UniversalEncoder()
-            vectorIndex = VectorIndex()
-            vectorIndex.load("./pickle_files/serializedIndex02")
-            self.index = vectorIndex
-            self.encoderType = Algorithm.USE
-        elif algo == Algorithm.BERT:
-            self.encoder = BERT()
-            vectorIndex = VectorIndex()
-            vectorIndex.load("./pickle_files/serializedIndex02")
-            self.index = vectorIndex
-            self.encoderType = Algorithm.BERT

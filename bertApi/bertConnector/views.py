@@ -98,8 +98,9 @@ def weeklyQueryCount(request,user_id):
 def switchAlgo(request):
     if request.method=="POST":
         algorithm = request.data['algorithm']
+        # threading.Thread(target=switchAlgorithm,args=(algorithm)).start()
         switchAlgorithm(algorithm)
-        return Response({"status":"Algorithm Switched Successfully"})
+        return Response({"status":"Algorithm switching"})
 
 # @api_view(['POST'])
 # def uploadDocument(request):

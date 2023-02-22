@@ -5,7 +5,7 @@ import numpy as np
 from sentence_transformers import SentenceTransformer
 import pickle
 
-from .algorithms import Runtime
+from .algorithms import Runtime, ModelStatus
 from .models import ServerStatus
 from django.utils import timezone
 from datetime import datetime
@@ -57,27 +57,48 @@ def loadIndex():
     indexFile.close()
     return faiss.deserialize_index(serializedIndex)
 
-def initializeModel():
+# def initializeModel():
+#     serverStatus = ServerStatus.objects.all().first()
+#     serverStatus.isModelLoading =True
+#     serverStatus.modelLoadingStatus = 0 
+#     serverStatus.startTimeStampModel = timezone.now()
+#     serverStatus.currentTimeStampModel = timezone.now()
+#     serverStatus.serverUpTime = timezone.now()
+#     serverStatus.save()
+#     print("Model Loading started")
+#     global runTime 
+#     runTime =Runtime()
+#     print("Model loading ended")
+def serverStatusDecorator(func):
     serverStatus = ServerStatus.objects.all().first()
+    if serverStatus is None:
+        serverStatus = ServerStatus.objects.create()
     serverStatus.isModelLoading =True
-    serverStatus.modelLoadingStatus = 0 
+    serverStatus.modelLoadingStatus = ModelStatus.MODEL_LOAD.value
     serverStatus.startTimeStampModel = timezone.now()
     serverStatus.currentTimeStampModel = timezone.now()
     serverStatus.serverUpTime = timezone.now()
     serverStatus.save()
+    def innerFunction(*args,**kwargs):
+        func(*args,**kwargs)
+    return innerFunction
+    
+@serverStatusDecorator
+def initializeModel():
     print("Model Loading started")
     global runTime 
     runTime =Runtime()
     print("Model loading ended")
 
-def similaritySearch(text):
-    return runTime.similaritySearch(text)
-
+@serverStatusDecorator
 def switchAlgorithm(algo):
-    global runTime
     print("Algorithm is switching")
+    global runTime
     runTime.switch_algo(algo)
     print("Algorithm Switched")
+
+def similaritySearch(text):
+    return runTime.similaritySearch(text)
 
 def getTimeStamp(value):
     try:

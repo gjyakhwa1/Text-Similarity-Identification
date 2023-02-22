@@ -32,11 +32,11 @@ class ServerStatus(models.Model):
     isQuestionsUpdating = models.BooleanField(default=False)
     modelLoadingStatus = models.IntegerField(default=0)
     questionsUpdatingStatus = models.IntegerField(default=0)
-    startTimeStampModel = models.DateTimeField()
-    currentTimeStampModel = models.DateTimeField()
-    startTimeStampQuestions = models.DateTimeField()
-    currentTimeStampQuestions = models.DateTimeField()
-    serverUpTime = models.DateTimeField()
+    startTimeStampModel = models.DateTimeField(blank=True, null=True)
+    currentTimeStampModel = models.DateTimeField(blank=True, null=True)
+    startTimeStampQuestions = models.DateTimeField(blank=True, null=True)
+    currentTimeStampQuestions = models.DateTimeField(blank=True, null=True)
+    serverUpTime = models.DateTimeField(blank=True, null=True)
 
     def __str__(self):
         return self.currentModel
