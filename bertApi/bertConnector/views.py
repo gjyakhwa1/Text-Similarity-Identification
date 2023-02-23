@@ -27,11 +27,22 @@ def viewQuestion(request):
 @api_view(["GET"])
 @authentication_classes([TokenAuthentication])
 def getServerStatus(request):
+    modelLoadingStatusMap = {
+        0:"MODEL_LOAD",
+        1:"FAISS_LOAD",
+        2:"COMPLETE"
+    }
+    questionUpdatingStatusMap = {
+        0 : "DATABASE_UPDATE",
+        1:"ENCODE",
+        2:"DUMP",
+        3:"COMPLETE"
+    }
     data =ServerStatus.objects.all().first()
     serializeData = ServerStatusSerializer(data)
     modelTimeStamp = getTimeStamp(serializeData.data["currentTimeStampModel"])-getTimeStamp(serializeData.data["startTimeStampModel"])
     questionsTimeStamp = getTimeStamp(serializeData.data["currentTimeStampQuestions"])-getTimeStamp(serializeData.data["startTimeStampQuestions"])
-    return Response({"data":serializeData.data,"modelTimeStamp":modelTimeStamp.total_seconds(),"questionsTimeStamp":questionsTimeStamp.total_seconds()}, status=200)
+    return Response({"data":serializeData.data,"modelTimeStamp":modelTimeStamp.total_seconds(),"questionsTimeStamp":questionsTimeStamp.total_seconds(), "modelLoadingStatusMap":modelLoadingStatusMap,"questionUpdatingStatusMap":questionUpdatingStatusMap}, status=200)
 
 
 @api_view(["POST"])
