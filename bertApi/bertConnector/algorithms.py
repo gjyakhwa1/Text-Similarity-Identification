@@ -13,12 +13,21 @@ class ModelStatus(Enum):
     FAISS_LOAD = 1
     COMPLETE  = 2
 
+class FaissUpdateStatus(Enum):
+    DATABASE_UPDATE = 0
+    ENCODE = 1
+    INDEXING = 2
+    DUMP = 3
+    COMPLETE = 4
+
 class Runtime:
     def __init__(self):
         self.initializer(Algorithm.BERT ,BERT)
     
     def initializer(self,model_name,model):
         serverStatus = ServerStatus.objects.all().first()
+        if serverStatus is None:
+            serverStatus = ServerStatus.objects.create()
         self.currentAlgo =model_name
         self.encoder = model()
         self.encoderType = model_name
@@ -27,7 +36,7 @@ class Runtime:
         serverStatus.currentTimeStampModel = timezone.now()
         serverStatus.save()
         vectorIndex = VectorIndex()
-        path = serverStatus.currentQuestionsPath
+        path = serverStatus.currentQuestionsPath if model_name==Algorithm.BERT else serverStatus.currentQuestionsPathUSE
         vectorIndex.load(path)
         self.index = vectorIndex
         serverStatus.modelLoadingStatus = ModelStatus.COMPLETE.value
@@ -48,6 +57,39 @@ class Runtime:
             self.initializer(Algorithm.USE ,UniversalEncoder)
         elif algo == Algorithm.BERT:
             self.initializer(Algorithm.BERT ,BERT)
+    
+    def uploadCSV(self, reader):
+        serverStatus = ServerStatus.objects.all().first()
+        if serverStatus is None:
+            serverStatus = ServerStatus.objects.create()
+        serverStatus.isQuestionsUpdating = True
+        serverStatus.questionsUpdatingStatus = FaissUpdateStatus.DATABASE_UPDATE.value
+        serverStatus.startTimeStampQuestions = timezone.now()
+        serverStatus.currentTimeStampQuestions = timezone.now()
+        serverStatus.serverUpTime = timezone.now()
+        serverStatus.save()
+
+        #Add data to the database
+        csvData =[row[0] for row in reader]
+        print(csvData)
+        serverStatus.questionsUpdatingStatus = FaissUpdateStatus.ENCODE.value
+        serverStatus.currentTimeStampQuestions = timezone.now()
+        serverStatus.save()
+
+        #Encode the model
+        serverStatus.questionsUpdatingStatus = FaissUpdateStatus.INDEXING.value
+        serverStatus.currentTimeStampQuestions = timezone.now()
+        serverStatus.save()
+
+        #Indexing the model
+        serverStatus.questionsUpdatingStatus = FaissUpdateStatus.DUMP.value
+        serverStatus.currentTimeStampQuestions = timezone.now()
+        serverStatus.save()
+
+        #Complete
+        serverStatus.questionsUpdatingStatus =FaissUpdateStatus.COMPLETE.value
+        serverStatus.currentTimeStampQuestions = timezone.now()
+        serverStatus.save()
 
     # generates new index from uploaded data
     # def change_index(self, filename):

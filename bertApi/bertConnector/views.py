@@ -7,12 +7,12 @@ from rest_framework.authtoken.models import Token
 
 from accounts.helper import getWeeklyQueryData
 from accounts.helper import getHighestQueryUsers
-from .helper import cleanText, similaritySearch, switchAlgorithm, getTimeStamp
+from .helper import cleanText, similaritySearch, switchAlgorithm, getTimeStamp, uploadCSVFile
 from .models import Question, QuestionCountHistory, ServerStatus
 from .serializers import QuestionSerializer, ServerStatusSerializer
 
 from datetime import date
-
+import csv,io
 # Create your views here.
 
 
@@ -102,6 +102,21 @@ def switchAlgo(request):
         switchAlgorithm(algorithm)
         return Response({"status":"Algorithm switching"})
 
+
+@api_view(['POST'])
+@authentication_classes([TokenAuthentication])
+def uploadData(request):
+    if request.method == "POST":
+        csvFile = request.FILES.get('file')
+        print(csvFile)
+        if not csvFile:
+            return Response({"error":"No CSV file provided"})
+        #Parsing the CSV file
+        decodedFile = csvFile.read().decode('utf-8')
+        ioString = io.StringIO(decodedFile)
+        reader = csv.reader(ioString)
+        uploadCSVFile(reader)
+        return Response({'success':"Completed"})
 # @api_view(['POST'])
 # def uploadDocument(request):
 #     if request.method == "POST":

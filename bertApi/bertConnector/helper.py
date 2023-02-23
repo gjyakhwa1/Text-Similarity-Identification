@@ -57,18 +57,6 @@ def loadIndex():
     indexFile.close()
     return faiss.deserialize_index(serializedIndex)
 
-# def initializeModel():
-#     serverStatus = ServerStatus.objects.all().first()
-#     serverStatus.isModelLoading =True
-#     serverStatus.modelLoadingStatus = 0 
-#     serverStatus.startTimeStampModel = timezone.now()
-#     serverStatus.currentTimeStampModel = timezone.now()
-#     serverStatus.serverUpTime = timezone.now()
-#     serverStatus.save()
-#     print("Model Loading started")
-#     global runTime 
-#     runTime =Runtime()
-#     print("Model loading ended")
 def serverStatusDecorator(func):
     serverStatus = ServerStatus.objects.all().first()
     if serverStatus is None:
@@ -96,6 +84,12 @@ def switchAlgorithm(algo):
     global runTime
     runTime.switch_algo(algo)
     print("Algorithm Switched")
+
+def uploadCSVFile(reader):
+    print("Database is updating")
+    global runTime
+    runTime.uploadCSV(reader)
+    print("Databse update Complete")
 
 def similaritySearch(text):
     return runTime.similaritySearch(text)
