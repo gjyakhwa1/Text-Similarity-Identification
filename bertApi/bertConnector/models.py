@@ -28,6 +28,7 @@ AVAILABLE_MODEL_CHOICES = (
 class ServerStatus(models.Model):
     currentModel = models.CharField(max_length=10,default="BERT", choices=AVAILABLE_MODEL_CHOICES)
     currentQuestionsPath = models.CharField(max_length=50,default="./pickle_files/serializedIndex02")
+    currentQuestionsPathUSE = models.CharField(max_length=50,default="./pickle_files/serializedIndex02",null=True)
     isModelLoading =models.BooleanField(default=False)
     isQuestionsUpdating = models.BooleanField(default=False)
     modelLoadingStatus = models.IntegerField(default=0)
