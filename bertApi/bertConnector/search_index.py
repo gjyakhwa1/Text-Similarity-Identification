@@ -1,7 +1,5 @@
 import faiss
 import pickle
-from sklearn.metrics.pairwise import cosine_similarity
-
 
 class VectorIndex:
     def __init__(self,k=4):#k speicifies the number of nearest neighbour
@@ -17,18 +15,27 @@ class VectorIndex:
         indexFile.close()
         self.index = faiss.deserialize_index(serializedIndex)
 
-    # def build(self, vectors, labels, number_of_trees=5):
-    #     self.vectors = vectors
-    #     self.labels = labels
+    def createNewIndex(self,embeddings):
+        index = faiss.IndexFlatL2(embeddings.shape[1])  # 768
+        index.add(embeddings)
+        return index
+    
+    def dumpSerializeIndex(self,buffer,fileList):
+        if fileList=="serializedIndex":
+            self._helperDumpSerializeIndex("serializedIndex","serializedIndex01",buffer)
+            return "serializedIndex01"
+        else:
+            self._helperDumpSerializeIndex("serializedIndex01","serializedIndex",buffer)
+            return "serializedIndex"
+    
+    def _helperDumpSerializeIndex(self,currentfilePath,newFilePath,buffer):
+        indexFile = open(f"./pickle_files/indexFiles/{currentfilePath}", 'rb')
+        serializedIndex = pickle.load(indexFile)
+        indexFile.close()
+        buf = faiss.deserialize_index(serializedIndex)
+        buf.add(buffer)
+        index1 = faiss.serialize_index(buf)
+        indexFile = open(f"./pickle_files/indexFiles/{newFilePath}", "wb")
+        pickle.dump(index1, indexFile)
+        indexFile.close()
 
-    #     for i, vec in enumerate(vectors):
-    #         if not np.isnan(np.sum(vec)):
-    #             self.index.add_item(i, vec)
-    #     self.index.build(number_of_trees)
-
-    # def save(self, path):
-    #     label_path = path.split(".ann")[0] + ".labels"
-    #     print(label_path)
-    #     with open(label_path, "wb") as fp:
-    #         pickle.dump(self.labels, fp)
-    #     self.index.save(path)

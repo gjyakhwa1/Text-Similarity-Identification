@@ -2,8 +2,10 @@ from encoders.use import UniversalEncoder
 from encoders.bert import BERT
 from enum import Enum
 from .search_index import VectorIndex
-from .models import ServerStatus
+from .models import ServerStatus, Question
 from django.utils import timezone
+import numpy as np
+import os
 class Algorithm(Enum):
     USE = 1
     BERT = 2
@@ -16,9 +18,8 @@ class ModelStatus(Enum):
 class FaissUpdateStatus(Enum):
     DATABASE_UPDATE = 0
     ENCODE = 1
-    INDEXING = 2
-    DUMP = 3
-    COMPLETE = 4
+    DUMP = 2
+    COMPLETE = 3
 
 class Runtime:
     def __init__(self):
@@ -63,44 +64,44 @@ class Runtime:
         if serverStatus is None:
             serverStatus = ServerStatus.objects.create()
         serverStatus.isQuestionsUpdating = True
+        #Add data to the database
         serverStatus.questionsUpdatingStatus = FaissUpdateStatus.DATABASE_UPDATE.value
         serverStatus.startTimeStampQuestions = timezone.now()
         serverStatus.currentTimeStampQuestions = timezone.now()
         serverStatus.serverUpTime = timezone.now()
         serverStatus.save()
-
-        #Add data to the database
         csvData =[row[0] for row in reader]
-        print(csvData)
+        for question in csvData:
+            questionModel = Question()
+            questionModel.question = question
+            questionModel.save()
+        #Encode the sentences
         serverStatus.questionsUpdatingStatus = FaissUpdateStatus.ENCODE.value
         serverStatus.currentTimeStampQuestions = timezone.now()
         serverStatus.save()
+        embeddings = self.encoder.encode_array(csvData)
+        embeddings = np.ascontiguousarray(embeddings)
 
-        #Encode the model
-        serverStatus.questionsUpdatingStatus = FaissUpdateStatus.INDEXING.value
-        serverStatus.currentTimeStampQuestions = timezone.now()
-        serverStatus.save()
-
-        #Indexing the model
+        #Dumping the index
         serverStatus.questionsUpdatingStatus = FaissUpdateStatus.DUMP.value
         serverStatus.currentTimeStampQuestions = timezone.now()
         serverStatus.save()
 
+        if self.currentAlgo == Algorithm.BERT:
+            fileName = os.path.basename(serverStatus.currentQuestionsPath)
+            newPath = VectorIndex().dumpSerializeIndex(embeddings,fileName)
+            serverStatus.currentQuestionsPath = f"./pickle_files/indexFiles/{newPath}"
+            os.remove(f"./pickle_files/indexFiles/{fileName}")
+            self.index.load(serverStatus.currentQuestionsPath)
+        else:
+            fileName = os.path.basename(serverStatus.currentQuestionsPathUSE)
+            newPath = VectorIndex().dumpSerializeIndex(embeddings,fileName)
+            serverStatus.currentQuestionsPathUSE =f"./pickle_files/indexFiles/{newPath}"
+            os.remove(f"./pickle_files/indexFiles/{fileName}")
+            self.index.load(serverStatus.currentQuestionsPathUSE)
+        serverStatus.save()
         #Complete
         serverStatus.questionsUpdatingStatus =FaissUpdateStatus.COMPLETE.value
         serverStatus.currentTimeStampQuestions = timezone.now()
+        serverStatus.isQuestionsUpdating=False
         serverStatus.save()
-
-    # generates new index from uploaded data
-    # def change_index(self, filename):
-    #     questions = []
-    #     with open(filename, "r") as fp:
-    #         questions = [
-    #             x.strip().lower().split("?,") for x in fp.readlines() if x != "\n"
-    #         ]
-    #     questions_string = [question[0] for question in questions]
-    #     embeddings = self.encoder.encode_array(questions_string)
-    #     annoy_index = AnnoyIndex(dimension=len(embeddings[0]))
-    #     annoy_index.build(embeddings, questions_string)
-    #     annoy_index.save("./indices/" + filename + str(self.current_algo) + ".ann")
-    #     self.index = annoy_index

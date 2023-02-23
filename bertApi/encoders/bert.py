@@ -4,7 +4,7 @@ import pickle
 
 
 class BERT(Encoder):
-    def __init__(self, model_path: str = "./pickle_files/modelTest"):
+    def __init__(self, model_path: str = "./pickle_files/modelFiles/modelTest"):
         if model_path=="bert-base-nli-mean-tokens":
             self.model = SentenceTransformer(model_path)
         else:
