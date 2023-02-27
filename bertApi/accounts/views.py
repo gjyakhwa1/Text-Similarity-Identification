@@ -25,7 +25,7 @@ def register(request):
 @api_view(['GET'])
 @authentication_classes([TokenAuthentication])
 def displayAllUser(request):
-    users=get_user_model.objects.all()
+    users=get_user_model().objects.all()
     data = CustomUserSerializer(users,many=True)
     return Response(data.data)
 
@@ -75,7 +75,7 @@ def loginUser(request):
             token,_ = Token.objects.get_or_create(user=user)
             userSerializer=CustomUserSerializer(user)
             loginHistory=LoginHistory.objects.filter(user= user).last()
-            if loginHistory.logout_at is None:
+            if loginHistory and loginHistory.logout_at is None:
                 loginHistory.logout_at=getLogoutTime(user)
                 loginHistory.save()
             LoginHistory.objects.create(user=user)
