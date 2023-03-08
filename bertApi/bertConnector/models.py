@@ -6,6 +6,7 @@ import datetime
 
 class Question(models.Model):
     question = models.TextField()
+    date = models.DateTimeField(auto_now_add=True)
 
     class Meta:
         ordering = ['id']
@@ -28,7 +29,7 @@ AVAILABLE_MODEL_CHOICES = (
 class ServerStatus(models.Model):
     currentModel = models.CharField(max_length=10,default="BERT", choices=AVAILABLE_MODEL_CHOICES)
     currentQuestionsPath = models.CharField(max_length=50,default="./pickle_files/indexFiles/serializedIndex01")
-    currentQuestionsPathUSE = models.CharField(max_length=50,default="./pickle_files/indexFiles/serializedIndex01",null=True)
+    currentQuestionsPathUSE = models.CharField(max_length=50,default="./pickle_files/indexFiles/serializedIndex01USE",null=True)
     isModelLoading =models.BooleanField(default=False)
     isQuestionsUpdating = models.BooleanField(default=False)
     modelLoadingStatus = models.IntegerField(default=0)
