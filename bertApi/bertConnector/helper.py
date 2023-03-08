@@ -5,11 +5,14 @@ import numpy as np
 from sentence_transformers import SentenceTransformer
 import pickle
 
-model = None
-count = 0
-index = None
+from .algorithms import Runtime, ModelStatus
+from .models import ServerStatus
+from django.utils import timezone
+from datetime import datetime
+
 sentence_embeddings = None
 
+runTime=None
 
 def cleanText(text):
     return re.sub(r"[^a-zA-Z0-9\s]", "", text)
@@ -54,26 +57,47 @@ def loadIndex():
     indexFile.close()
     return faiss.deserialize_index(serializedIndex)
 
-
+def serverStatusDecorator(func):
+    serverStatus = ServerStatus.objects.all().first()
+    if serverStatus is None:
+        serverStatus = ServerStatus.objects.create()
+    serverStatus.isModelLoading =True
+    serverStatus.modelLoadingStatus = ModelStatus.MODEL_LOAD.value
+    serverStatus.startTimeStampModel = timezone.now()
+    serverStatus.currentTimeStampModel = timezone.now()
+    serverStatus.serverUpTime = timezone.now()
+    serverStatus.save()
+    def innerFunction(*args,**kwargs):
+        func(*args,**kwargs)
+    return innerFunction
+    
+@serverStatusDecorator
 def initializeModel():
     print("Model Loading started")
-    global model, index, count
-    model = loadModel()
-    index = loadIndex()
-    count = 1
+    global runTime 
+    runTime =Runtime()
     print("Model loading ended")
 
+@serverStatusDecorator
+def switchAlgorithm(algo):
+    print("Algorithm is switching")
+    global runTime
+    runTime.switch_algo(algo)
+    print("Algorithm Switched")
 
-def getCount():
-    global count
-    return count
-
+def uploadCSVFile(reader):
+    print("Database is updating")
+    global runTime
+    runTime.uploadCSV(reader)
+    print("Databse update Complete")
 
 def similaritySearch(text):
-    # storeModel() #-run only oncel to pickling the model
-    k = 4  # number of similar vector
-    xq = model.encode([text])  # query text
-    D, I = index.search(xq, k)
-    # lst = [I[0][idx] for idx, i in enumerate(D[0]) if i < 100]
-    # return np.array(lst)
-    return I[0]
+    return runTime.similaritySearch(text)
+
+def getTimeStamp(value):
+    try:
+        currentTimeStampModel = datetime.strptime(value, '%Y-%m-%dT%H:%M:%S%z')
+    except ValueError:
+        currentTimeStampModel = datetime.strptime(value, '%Y-%m-%dT%H:%M:%S.%f%z')
+    return currentTimeStampModel
+

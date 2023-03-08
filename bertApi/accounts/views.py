@@ -1,12 +1,15 @@
 from rest_framework import status
-from rest_framework.decorators import api_view,authentication_classes, permission_classes
-from django.contrib.auth import get_user_model, authenticate, login, logout
-from .serializers import RegisterSerializer,CustomUserSerializer,LoginHistorySerializer
-from rest_framework.response import Response
-from .models import LoginHistory
-from django.utils import timezone
+from rest_framework.decorators import api_view,authentication_classes
 from rest_framework.authtoken.models import Token
 from rest_framework.authentication import TokenAuthentication
+from rest_framework.response import Response
+
+from django.utils import timezone
+from django.contrib.auth import get_user_model, authenticate
+
+from .serializers import RegisterSerializer,CustomUserSerializer,LoginHistorySerializer
+from .models import LoginHistory
+from .helper import getLogoutTime
 
 @api_view(['POST'])
 def register(request):
@@ -22,7 +25,7 @@ def register(request):
 @api_view(['GET'])
 @authentication_classes([TokenAuthentication])
 def displayAllUser(request):
-    users=get_user_model.objects.all()
+    users=get_user_model().objects.all()
     data = CustomUserSerializer(users,many=True)
     return Response(data.data)
 
@@ -72,8 +75,8 @@ def loginUser(request):
             token,_ = Token.objects.get_or_create(user=user)
             userSerializer=CustomUserSerializer(user)
             loginHistory=LoginHistory.objects.filter(user= user).last()
-            if loginHistory.logout_at is None:
-                loginHistory.logout_at=timezone.now()
+            if loginHistory and loginHistory.logout_at is None:
+                loginHistory.logout_at=getLogoutTime(user)
                 loginHistory.save()
             LoginHistory.objects.create(user=user)
             return Response({"loginStatus":"Login","token":token.key,"user":userSerializer.data})
@@ -107,3 +110,5 @@ def userHistory(request,user_id):
         history = LoginHistory.objects.filter(user=user_id)
         serializer = LoginHistorySerializer(history,many=True)
         return Response({'loginHistory':serializer.data})
+
+

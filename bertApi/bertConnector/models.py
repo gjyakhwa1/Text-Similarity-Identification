@@ -1,10 +1,12 @@
 from django.db import models
 from accounts.models import CustomUser
+import datetime
 # Create your models here.
 
 
 class Question(models.Model):
     question = models.TextField()
+    date = models.DateTimeField(auto_now_add=True)
 
     class Meta:
         ordering = ['id']
@@ -16,8 +18,31 @@ class QuestionCountHistory(models.Model):
     user = models.ForeignKey(CustomUser,on_delete=models.CASCADE)
     date=models.DateField()
     count=models.IntegerField(default=0)
+    updated_at = models.DateTimeField(auto_now=True)
     def __str__(self):
         return self.user.username
+
+AVAILABLE_MODEL_CHOICES = (
+        ('BERT', 'BERT'),
+        ('USE','USE'),
+    )
+class ServerStatus(models.Model):
+    currentModel = models.CharField(max_length=10,default="BERT", choices=AVAILABLE_MODEL_CHOICES)
+    currentQuestionsPath = models.CharField(max_length=50,default="./pickle_files/indexFiles/serializedIndex01")
+    currentQuestionsPathUSE = models.CharField(max_length=50,default="./pickle_files/indexFiles/serializedIndex01USE",null=True)
+    isModelLoading =models.BooleanField(default=False)
+    isQuestionsUpdating = models.BooleanField(default=False)
+    modelLoadingStatus = models.IntegerField(default=0)
+    questionsUpdatingStatus = models.IntegerField(default=0)
+    startTimeStampModel = models.DateTimeField(blank=True, null=True)
+    currentTimeStampModel = models.DateTimeField(blank=True, null=True)
+    startTimeStampQuestions = models.DateTimeField(blank=True, null=True)
+    currentTimeStampQuestions = models.DateTimeField(blank=True, null=True)
+    serverUpTime = models.DateTimeField(blank=True, null=True)
+
+    def __str__(self):
+        return self.currentModel
+
 
 # class UploadDocument(models.Model):
 #     author = models.CharField(blank=False,max_length=100)

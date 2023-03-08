@@ -61,7 +61,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'bertConnector.middleware.simple_middleware',
+    # 'bertConnector.middleware.simple_middleware',
 ]
 
 ROOT_URLCONF = 'bertApi.urls'
@@ -131,9 +131,11 @@ REST_FRAMEWORK = {
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Asia/Kathmandu'
 
 USE_I18N = True
+
+USE_L10N = True
 
 USE_TZ = True
 
