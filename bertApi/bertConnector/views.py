@@ -109,6 +109,9 @@ def weeklyQueryCount(request,user_id):
 def switchAlgo(request):
     if request.method=="POST":
         algorithm = request.data['algorithm']
+        serverStatus = ServerStatus.objects.all().first()
+        if serverStatus and serverStatus.isModelLoading:
+            return Response({"error":"Model is in Loading State"})
         threading.Thread(target=switchAlgorithm,args=(algorithm,)).start()
         return Response({"status":"Algorithm switching"})
 
