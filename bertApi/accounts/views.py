@@ -20,7 +20,7 @@ def register(request):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         else:
             return Response({"message":"Signup request sent for admin approval."}, status=status.HTTP_200_OK)
-    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    return Response({"error":serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
 
 @api_view(['GET'])
 @authentication_classes([TokenAuthentication])

@@ -12,7 +12,7 @@ from .models import Question, QuestionCountHistory, ServerStatus
 from .serializers import QuestionSerializer, ServerStatusSerializer
 
 from datetime import date
-import csv,io
+import csv,io,threading
 # Create your views here.
 
 
@@ -109,8 +109,7 @@ def weeklyQueryCount(request,user_id):
 def switchAlgo(request):
     if request.method=="POST":
         algorithm = request.data['algorithm']
-        # threading.Thread(target=switchAlgorithm,args=(algorithm)).start()
-        switchAlgorithm(algorithm)
+        threading.Thread(target=switchAlgorithm,args=(algorithm,)).start()
         return Response({"status":"Algorithm switching"})
 
 
@@ -119,14 +118,14 @@ def switchAlgo(request):
 def uploadData(request):
     if request.method == "POST":
         csvFile = request.FILES.get('file')
-        print(csvFile)
         if not csvFile:
             return Response({"error":"No CSV file provided"})
         #Parsing the CSV file
         decodedFile = csvFile.read().decode('utf-8')
         ioString = io.StringIO(decodedFile)
         reader = csv.reader(ioString)
-        uploadCSVFile(reader)
+        threading.Thread(target=uploadCSVFile,args=(reader,)).start()
+        # uploadCSVFile(reader)
         return Response({'success':"Completed"})
 # @api_view(['POST'])
 # def uploadDocument(request):

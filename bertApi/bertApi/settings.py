@@ -87,6 +87,7 @@ WSGI_APPLICATION = 'bertApi.wsgi.application'
 # CORS_ORIGIN_ALLOW_ALL = False
 CORS_ORIGIN_WHITELIST = [
     'http://localhost:3000',
+    'https://localhost:3000'
 ]
 CSRF_TRUSTED_ORIGINS = ['http://localhost:3000']
 ALLOWED_HOSTS = ['http://localhost:3000','127.0.0.1']
