@@ -57,7 +57,21 @@ def loadIndex():
     indexFile.close()
     return faiss.deserialize_index(serializedIndex)
 
-def serverStatusDecorator(func):
+# def serverStatusDecorator(func):
+#     serverStatus = ServerStatus.objects.all().first()
+#     if serverStatus is None:
+#         serverStatus = ServerStatus.objects.create()
+#     serverStatus.isModelLoading =True
+#     serverStatus.modelLoadingStatus = ModelStatus.MODEL_LOAD.value
+#     serverStatus.startTimeStampModel = timezone.now()
+#     serverStatus.currentTimeStampModel = timezone.now()
+#     serverStatus.serverUpTime = timezone.now()
+#     serverStatus.save()
+#     def innerFunction(*args,**kwargs):
+#         func(*args,**kwargs)
+#     return innerFunction
+    
+def initializeModel():
     serverStatus = ServerStatus.objects.all().first()
     if serverStatus is None:
         serverStatus = ServerStatus.objects.create()
@@ -67,19 +81,22 @@ def serverStatusDecorator(func):
     serverStatus.currentTimeStampModel = timezone.now()
     serverStatus.serverUpTime = timezone.now()
     serverStatus.save()
-    def innerFunction(*args,**kwargs):
-        func(*args,**kwargs)
-    return innerFunction
-    
-@serverStatusDecorator
-def initializeModel():
     print("Model Loading started")
     global runTime 
     runTime =Runtime()
     print("Model loading ended")
 
-@serverStatusDecorator
+# @serverStatusDecorator
 def switchAlgorithm(algo):
+    serverStatus = ServerStatus.objects.all().first()
+    if serverStatus is None:
+        serverStatus = ServerStatus.objects.create()
+    serverStatus.isModelLoading =True
+    serverStatus.modelLoadingStatus = ModelStatus.MODEL_LOAD.value
+    serverStatus.startTimeStampModel = timezone.now()
+    serverStatus.currentTimeStampModel = timezone.now()
+    serverStatus.serverUpTime = timezone.now()
+    serverStatus.save()
     print("Algorithm is switching")
     global runTime
     runTime.switch_algo(algo)
