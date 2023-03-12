@@ -5,6 +5,7 @@ from .models import ServerStatus, Question
 from django.utils import timezone
 import numpy as np
 import os
+from sklearn.metrics.pairwise import cosine_similarity
 class Algorithm(Enum):
     BERT = 1
 
@@ -42,7 +43,12 @@ class Runtime:
         serverStatus.currentTimeStampModel = timezone.now()
         serverStatus.isModelLoading=False
         serverStatus.save()
-        
+    
+    def getCosineSimilarity(self,question,results):
+        questionEmbedding = self.encoder.encode(question)
+        resultsEmbedding = self.encoder.encode_array(results)
+        return [cosine_similarity(questionEmbedding, resultEmbedding.reshape(1,-1))[0] for resultEmbedding in resultsEmbedding] 
+    
     def similaritySearch(self,text):
         encodedQuery = self.encoder.encode(text)
         return self.index.query(encodedQuery)

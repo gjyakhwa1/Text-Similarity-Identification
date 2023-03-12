@@ -7,7 +7,7 @@ from rest_framework.authtoken.models import Token
 
 from accounts.helper import getWeeklyQueryData
 from accounts.helper import getHighestQueryUsers
-from .helper import cleanText, similaritySearch, getTimeStamp, uploadCSVFile
+from .helper import cleanText, similaritySearch, getTimeStamp, uploadCSVFile, getCosineSimilarity
 from .models import Question, QuestionCountHistory, ServerStatus
 from .serializers import QuestionSerializer, ServerStatusSerializer
 
@@ -68,7 +68,8 @@ def queryQuestion(request):
         similarQuesId = similarQuesId + 10043
         similarLst = [Question.objects.get(pk=i) for i in similarQuesId]
         serializeQuestion = QuestionSerializer(similarLst, many=True)
-        return Response(serializeQuestion.data)
+        cosineSimilarity = getCosineSimilarity(ques,[cleanText(item['question']) for item in serializeQuestion.data])
+        return Response({"similarQuestion":serializeQuestion.data,"cosineSimilarity":cosineSimilarity})
 
 
 @api_view(["GET"])

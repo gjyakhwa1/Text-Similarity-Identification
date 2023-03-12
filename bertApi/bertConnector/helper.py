@@ -76,10 +76,13 @@ def uploadCSVFile(reader,examinationType,examYear):
     print("Database is updating")
     global runTime
     runTime.uploadCSV(reader,examinationType,examYear)
-    print("Databse update Complete")
+    print("Database update Complete")
 
 def similaritySearch(text):
     return runTime.similaritySearch(text)
+
+def getCosineSimilarity(ques,results):
+    return runTime.getCosineSimilarity(ques,results)
 
 def getTimeStamp(value):
     try:
