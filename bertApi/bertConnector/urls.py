@@ -12,7 +12,6 @@ urlpatterns = [
     path('api/queryCount/<int:user_id>',views.perDayQueryCount,name='perday-query-count'),
     path('api/queryCountToday/<int:user_id>',views.queryCountToday,name='query-count-today'),
     path('api/weeklyQueryCount/<int:user_id>',views.weeklyQueryCount,name='weekly-query-count'),
-    path('api/switchAlgorithm',views.switchAlgo,name="switch-algorithm"),
     path('api/uploadData',views.uploadData,name="upload-data"),
     # path('api/uploadDocument/',views.uploadDocument,name="upload-document")
 ]

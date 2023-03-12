@@ -56,8 +56,8 @@ def loadIndex():
     serializedIndex = pickle.load(indexFile)
     indexFile.close()
     return faiss.deserialize_index(serializedIndex)
-
-def serverStatusDecorator(func):
+    
+def initializeModel():
     serverStatus = ServerStatus.objects.all().first()
     if serverStatus is None:
         serverStatus = ServerStatus.objects.create()
@@ -67,32 +67,22 @@ def serverStatusDecorator(func):
     serverStatus.currentTimeStampModel = timezone.now()
     serverStatus.serverUpTime = timezone.now()
     serverStatus.save()
-    def innerFunction(*args,**kwargs):
-        func(*args,**kwargs)
-    return innerFunction
-    
-@serverStatusDecorator
-def initializeModel():
     print("Model Loading started")
     global runTime 
     runTime =Runtime()
     print("Model loading ended")
 
-@serverStatusDecorator
-def switchAlgorithm(algo):
-    print("Algorithm is switching")
-    global runTime
-    runTime.switch_algo(algo)
-    print("Algorithm Switched")
-
-def uploadCSVFile(reader):
+def uploadCSVFile(reader,examinationType,examYear):
     print("Database is updating")
     global runTime
-    runTime.uploadCSV(reader)
-    print("Databse update Complete")
+    runTime.uploadCSV(reader,examinationType,examYear)
+    print("Database update Complete")
 
 def similaritySearch(text):
     return runTime.similaritySearch(text)
+
+def getCosineSimilarity(ques,results):
+    return runTime.getCosineSimilarity(ques,results)
 
 def getTimeStamp(value):
     try:

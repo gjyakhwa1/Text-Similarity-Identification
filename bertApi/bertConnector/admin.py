@@ -7,7 +7,7 @@ from import_export.admin import ImportExportModelAdmin
 
 @admin.register(Question)
 class ViewAdmin(ImportExportModelAdmin):
-    list_display = ["id", "question","date"]
+    list_display = ["id", "question","date","examinationType","examYear"]
     from_encoding = 'utf-8'
 
 class CustomQuestionCountHistory(admin.ModelAdmin):
