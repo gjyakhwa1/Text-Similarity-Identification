@@ -7,7 +7,8 @@ import datetime
 class Question(models.Model):
     question = models.TextField()
     date = models.DateTimeField(auto_now_add=True)
-
+    examYear = models.DateField(blank=False)
+    examinationType =models.TextField(blank=False,default="Quora")
     class Meta:
         ordering = ['id']
 
@@ -24,12 +25,10 @@ class QuestionCountHistory(models.Model):
 
 AVAILABLE_MODEL_CHOICES = (
         ('BERT', 'BERT'),
-        ('USE','USE'),
     )
 class ServerStatus(models.Model):
     currentModel = models.CharField(max_length=10,default="BERT", choices=AVAILABLE_MODEL_CHOICES)
     currentQuestionsPath = models.CharField(max_length=50,default="./pickle_files/indexFiles/serializedIndex01")
-    currentQuestionsPathUSE = models.CharField(max_length=50,default="./pickle_files/indexFiles/serializedIndex01USE",null=True)
     isModelLoading =models.BooleanField(default=False)
     isQuestionsUpdating = models.BooleanField(default=False)
     modelLoadingStatus = models.IntegerField(default=0)

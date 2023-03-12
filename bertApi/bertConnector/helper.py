@@ -56,20 +56,6 @@ def loadIndex():
     serializedIndex = pickle.load(indexFile)
     indexFile.close()
     return faiss.deserialize_index(serializedIndex)
-
-# def serverStatusDecorator(func):
-#     serverStatus = ServerStatus.objects.all().first()
-#     if serverStatus is None:
-#         serverStatus = ServerStatus.objects.create()
-#     serverStatus.isModelLoading =True
-#     serverStatus.modelLoadingStatus = ModelStatus.MODEL_LOAD.value
-#     serverStatus.startTimeStampModel = timezone.now()
-#     serverStatus.currentTimeStampModel = timezone.now()
-#     serverStatus.serverUpTime = timezone.now()
-#     serverStatus.save()
-#     def innerFunction(*args,**kwargs):
-#         func(*args,**kwargs)
-#     return innerFunction
     
 def initializeModel():
     serverStatus = ServerStatus.objects.all().first()
@@ -86,26 +72,10 @@ def initializeModel():
     runTime =Runtime()
     print("Model loading ended")
 
-# @serverStatusDecorator
-def switchAlgorithm(algo):
-    serverStatus = ServerStatus.objects.all().first()
-    if serverStatus is None:
-        serverStatus = ServerStatus.objects.create()
-    serverStatus.isModelLoading =True
-    serverStatus.modelLoadingStatus = ModelStatus.MODEL_LOAD.value
-    serverStatus.startTimeStampModel = timezone.now()
-    serverStatus.currentTimeStampModel = timezone.now()
-    serverStatus.serverUpTime = timezone.now()
-    serverStatus.save()
-    print("Algorithm is switching")
-    global runTime
-    runTime.switch_algo(algo)
-    print("Algorithm Switched")
-
-def uploadCSVFile(reader):
+def uploadCSVFile(reader,examinationType,examYear):
     print("Database is updating")
     global runTime
-    runTime.uploadCSV(reader)
+    runTime.uploadCSV(reader,examinationType,examYear)
     print("Databse update Complete")
 
 def similaritySearch(text):

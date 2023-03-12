@@ -27,12 +27,6 @@ class VectorIndex:
         if fileList == "serializedIndex01":
             self._helperDumpSerializeIndex("serializedIndex01","serializedIndex",buffer)
             return "serializedIndex"
-        if fileList == "serializedIndexUSE":
-            self._helperDumpSerializeIndex("serializedIndexUSE","serializedIndex01USE",buffer)
-            return "serializedIndex01USE"
-        if fileList == "serializedIndex01USE":
-            self._helperDumpSerializeIndex("serializedIndex01USE","serializedIndexUSE",buffer)
-            return "serializedIndexUSE"
     
     def _helperDumpSerializeIndex(self,currentfilePath,newFilePath,buffer):
         indexFile = open(f"./pickle_files/indexFiles/{currentfilePath}", 'rb')
