@@ -121,6 +121,26 @@ def uploadData(request):
         threading.Thread(target=uploadCSVFile,args=(reader,examinationType,examYear,)).start()
         # uploadCSVFile(reader)
         return Response({'success':"Completed"})
+
+@api_view(["GET"])
+@authentication_classes([TokenAuthentication])
+def filterOptions(request):
+    if request.method=="GET":
+        options={
+            "examinationYear":[],
+            "examName":[]
+        }
+        options['examinationYear'] = Question.objects.order_by().values_list('examYear', flat=True).distinct()
+        options['examName'] = Question.objects.order_by().values_list('examinationType', flat=True).distinct()
+        return Response(options)
+
+@api_view(["POST"])
+@authentication_classes([TokenAuthentication])
+def filterQuestions(request):
+    if request.method=="POST":
+        results = Question.objects.filter(examYear = request.data['examYear'],examinationType=request.data['examinationType']).values_list()
+        return Response({"results":results})
+
 # @api_view(['POST'])
 # def uploadDocument(request):
 #     if request.method == "POST":
