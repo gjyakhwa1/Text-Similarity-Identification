@@ -110,5 +110,23 @@ def userHistory(request,user_id):
         history = LoginHistory.objects.filter(user=user_id)
         serializer = LoginHistorySerializer(history,many=True)
         return Response({'loginHistory':serializer.data})
+    
+@api_view(["GET"])
+@authentication_classes([TokenAuthentication])
+def getOpenAIToken(request):
+    if request.method=="GET":
+        token_key = request.auth
+        token = Token.objects.get(key=token_key)
+        return Response({"openAIToken":token.user.openAIToken})
 
-
+@api_view(["POST"])
+@authentication_classes([TokenAuthentication])
+def addOpenAIToken(request):
+    if request.method=="POST":
+        token_key = request.auth
+        token = Token.objects.get(key=token_key)
+        User = get_user_model()
+        user = User.objects.get(id=token.user.id)
+        user.openAIToken = request.data["openAIToken"]
+        user.save()
+        return Response({"message":"OpenAI Token added successfully"})
