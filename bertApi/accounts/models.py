@@ -9,6 +9,7 @@ class CustomUser(AbstractUser):
     )
     approvalStatus = models.CharField(default="Pending",max_length=15,choices=APPROVAL_CHOICES)
     totalQueryQuestion = models.IntegerField(default=0)
+    openAIToken= models.CharField(blank=True,max_length=50,default="")
 
 class LoginHistory(models.Model):
     user=models.ForeignKey(CustomUser,on_delete=models.CASCADE)
