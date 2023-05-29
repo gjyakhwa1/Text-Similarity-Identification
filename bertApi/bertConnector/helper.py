@@ -72,10 +72,10 @@ def initializeModel():
     runTime =Runtime()
     print("Model loading ended")
 
-def uploadCSVFile(reader,examinationType,examYear):
+def uploadCSVFile(reader,examinationType,examYear,user):
     print("Database is updating")
     global runTime
-    runTime.uploadCSV(reader,examinationType,examYear)
+    runTime.uploadCSV(reader,examinationType,examYear,user)
     print("Database update Complete")
 
 def similaritySearch(text):

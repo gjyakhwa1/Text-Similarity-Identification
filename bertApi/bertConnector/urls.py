@@ -13,5 +13,8 @@ urlpatterns = [
     path('api/queryCountToday/<int:user_id>',views.queryCountToday,name='query-count-today'),
     path('api/weeklyQueryCount/<int:user_id>',views.weeklyQueryCount,name='weekly-query-count'),
     path('api/uploadData',views.uploadData,name="upload-data"),
+    path('api/filterOptions',views.filterOptions,name="filter-options"),
+    path('api/examQuestionsByTypeAndYear',views.getQuestionsByExam,name="filter-results"),
+    path('api/examQuestionsByUser',views.getQuestionsByUser,name="filter-results-user"),
     # path('api/uploadDocument/',views.uploadDocument,name="upload-document")
 ]
