@@ -7,6 +7,7 @@ import datetime
 class Question(models.Model):
     question = models.TextField()
     date = models.DateTimeField(auto_now_add=True)
+    user = models.ForeignKey(CustomUser,on_delete=models.CASCADE,default=1)
     examYear = models.DateField(blank=False)
     examinationType =models.TextField(blank=False,default="Quora")
     class Meta:
