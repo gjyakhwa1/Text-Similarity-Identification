@@ -112,13 +112,16 @@ def uploadData(request):
         csvFile = request.FILES.get('file')
         examinationType =request.data["examinationType"]
         examYear = request.data["examYear"]
+        token_key = request.auth
+        token = Token.objects.get(key=token_key)
+        user = token.user
         if not csvFile:
             return Response({"error":"No CSV file provided"})
         #Parsing the CSV file
         decodedFile = csvFile.read().decode('utf-8')
         ioString = io.StringIO(decodedFile)
         reader = csv.reader(ioString)
-        threading.Thread(target=uploadCSVFile,args=(reader,examinationType,examYear,)).start()
+        threading.Thread(target=uploadCSVFile,args=(reader,examinationType,examYear,user,)).start()
         # uploadCSVFile(reader)
         return Response({'success':"Completed"})
 
@@ -136,10 +139,20 @@ def filterOptions(request):
 
 @api_view(["POST"])
 @authentication_classes([TokenAuthentication])
-def filterQuestions(request):
+def getQuestionsByExam(request):
     if request.method=="POST":
         results = Question.objects.filter(examYear = request.data['examYear'],examinationType=request.data['examinationType']).values_list()
         return Response({"results":results})
+
+@api_view(["GET"])
+@authentication_classes([TokenAuthentication])
+def getQuestionsByUser(request):
+    if request.method == "GET":
+        token_key = request.auth
+        token = Token.objects.get(key=token_key)
+        result = Question.objects.filter(user=token.user)
+        serializedData = QuestionSerializer(result, many= True)
+        return Response({"results":serializedData.data})
 
 # @api_view(['POST'])
 # def uploadDocument(request):

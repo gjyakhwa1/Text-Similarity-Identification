@@ -53,7 +53,7 @@ class Runtime:
         encodedQuery = self.encoder.encode(text)
         return self.index.query(encodedQuery)
     
-    def uploadCSV(self, reader,examinationType,examYear):
+    def uploadCSV(self, reader,examinationType,examYear,user):
         serverStatus = ServerStatus.objects.all().first()
         if serverStatus is None:
             serverStatus = ServerStatus.objects.create()
@@ -70,6 +70,7 @@ class Runtime:
             questionModel.question = question
             questionModel.examYear = examYear
             questionModel.examinationType= examinationType
+            questionModel.user = user
             questionModel.save()
         #Encode the sentences
         serverStatus.questionsUpdatingStatus = FaissUpdateStatus.ENCODE.value
