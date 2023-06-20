@@ -141,8 +141,9 @@ def filterOptions(request):
 @authentication_classes([TokenAuthentication])
 def getQuestionsByExam(request):
     if request.method=="POST":
-        results = Question.objects.filter(examYear = request.data['examYear'],examinationType=request.data['examinationType']).values_list()
-        return Response({"results":results})
+        results = Question.objects.filter(examYear = request.data['examYear'],examinationType=request.data['examinationType'])
+        serializedData = QuestionSerializer(results, many= True)
+        return Response({"results":serializedData.data})
 
 @api_view(["GET"])
 @authentication_classes([TokenAuthentication])
