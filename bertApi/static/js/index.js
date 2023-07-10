@@ -15,9 +15,11 @@ function getCookie(name) {
 }
 const csrftoken = getCookie("csrftoken");
 
+
+
 document
-  .getElementById("form-wrapper")
-  .addEventListener("submit", async (e) => {
+  .getElementById("submitQuestion")
+  .onclick=async (e) => {
     e.preventDefault();
     const data = await getSimilarQuestions();
     console.log(data);
@@ -27,7 +29,7 @@ document
       var item = `<li class="list-group-item">${data[i].question}</li>`;
       ulwrapper.innerHTML += item;
     }
-  });
+  };
 async function getSimilarQuestions() {
   var queryUrl = "http://127.0.0.1:8000/api/queryQuestion/";
   var text = document.getElementById("queryQuestion").value;
@@ -42,6 +44,86 @@ async function getSimilarQuestions() {
     }),
   };
   response = await fetch(queryUrl, settings);
+  console.log("Here");
   var data = await response.json();
   return data;
 }
+
+document.getElementById("loginUser").onclick= async(e)=>{
+  e.preventDefault();
+  var queryUrl = "http://127.0.0.1:8000/auth/login";
+  var username = document.getElementById("username").value;
+  var password =document.getElementById("password").value
+  settings = {
+    method: "POST",
+    headers: {
+      "Content-type": "application/json",
+      "X-CSRFToken": csrftoken,
+    },
+    body: JSON.stringify({
+      username: username,
+      password:password
+    }),
+  };
+  response = await fetch(queryUrl, settings);
+}
+
+document
+  .getElementById("tokenGenerator")
+  .onclick=async (e) => {
+    e.preventDefault();
+    const data = await getToken();
+    document.getElementById("token-result").innerHTML = data.token;
+  };
+const getToken = async () =>{
+  var queryUrl = "http://127.0.0.1:8000/auth/api-token-auth";
+  var username = document.getElementById("username").value;
+  var password =document.getElementById("password").value
+  settings = {
+    method: "POST",
+    headers: {
+      "Content-type": "application/json",
+      "X-CSRFToken": csrftoken,
+    },
+    body: JSON.stringify({
+      username: username,
+      password:password
+    }),
+  };
+  response = await fetch(queryUrl, settings);
+  var data = await response.json();
+  return data;
+}
+// document.getElementById("uploadDocument").onclick=(e)=>{
+// e.preventDefault();
+// let author= document.getElementById("author").value;
+// let date= document.getElementById("date").value;
+// let sentences= document.getElementById("fileupload").value.split(",")
+// let note = document.getElementById("note").value
+// let documentId = document.getElementById("documentID").value
+// obj={
+//   "author":author,
+//   "date":date,
+//   "sentences":sentences,
+//   "note":note,
+//   "documentId":documentId
+// }
+// console.log(obj)
+// uploadDocument(obj)
+// }
+
+// const uploadDocument = async (obj) =>{
+//   let queryUrl = "http://127.0.0.1:8000/api/uploadDocument/";
+//   settings = {
+//     method: "POST",
+//     headers: {
+//       "Content-type": "application/json",
+//       "X-CSRFToken": csrftoken,
+//     },
+//     body: JSON.stringify(obj),
+//   };
+//   let response =await fetch(queryUrl,settings)
+//   // response = await fetch(queryUrl, settings);
+//   // console.log("Here");
+//   // var data = await response.json();
+// }

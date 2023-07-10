@@ -7,11 +7,14 @@ from sklearn.metrics.pairwise import cosine_similarity
 import pickle
 import time
 
-model = None
-count = 0
-index = None
+from .algorithms import Runtime, ModelStatus
+from .models import ServerStatus
+from django.utils import timezone
+from datetime import datetime
+
 sentence_embeddings = None
 
+runTime=None
 
 def cleanText(text):
     return re.sub(r"[^a-zA-Z0-9\s]", "", text)
@@ -22,14 +25,6 @@ def storeModel():
     model = SentenceTransformer('bert-base-nli-mean-tokens')
     pickle.dump(model, modelFile)
     modelFile.close()
-
-
-def loadModel():
-    filepath = "./pickle_files/modelFile"
-    modelFile = open(filepath, "rb")
-    ourModel = pickle.load(modelFile)
-    modelFile.close()
-    return ourModel
 
 
 def indexing():  # function to serialize index done in colab
@@ -47,29 +42,58 @@ def indexing():  # function to serialize index done in colab
     indexFile.close()
 
 
+def loadModel():
+    # filepath = "./pickle_files/fine_tuned_model"
+    filepath = "./pickle_files/modelTest"
+    modelFile = open(filepath, "rb")
+    ourModel = pickle.load(modelFile)
+    modelFile.close()
+    return ourModel
+
+
 def loadIndex():
-    filepath = './pickle_files/serializedIndex'
+    # filepath = './pickle_files/fineTuned_serializedIndex'
+    filepath = './pickle_files/serializedIndex02'
     indexFile = open(filepath, 'rb')
     serializedIndex = pickle.load(indexFile)
     indexFile.close()
     return faiss.deserialize_index(serializedIndex)
-
-
+    
 def initializeModel():
+    serverStatus = ServerStatus.objects.all().first()
+    if serverStatus is None:
+        serverStatus = ServerStatus.objects.create()
+    serverStatus.isModelLoading =True
+    serverStatus.modelLoadingStatus = ModelStatus.MODEL_LOAD.value
+    serverStatus.startTimeStampModel = timezone.now()
+    serverStatus.currentTimeStampModel = timezone.now()
+    serverStatus.serverUpTime = timezone.now()
+    serverStatus.save()
     print("Model Loading started")
-    global model, index, count
-    time.sleep(5)
-    model = loadModel()
-    index = loadIndex()
-    count = 1
+    global runTime 
+    runTime =Runtime()
+
     print("Model loading ended")
 
+def uploadCSVFile(reader,examinationType,examYear,user):
+    print("Database is updating")
+    global runTime
+    runTime.uploadCSV(reader,examinationType,examYear,user)
+    print("Database update Complete")
 
-def getCount():
-    global count
-    return count
+def similaritySearch(text):
+    return runTime.similaritySearch(text)
 
+def getCosineSimilarity(ques,results):
+    return runTime.getCosineSimilarity(ques,results)
 
+def getTimeStamp(value):
+    try:
+        currentTimeStampModel = datetime.strptime(value, '%Y-%m-%dT%H:%M:%S%z')
+    except ValueError:
+        currentTimeStampModel = datetime.strptime(value, '%Y-%m-%dT%H:%M:%S.%f%z')
+    return currentTimeStampModel
+  
 def similaritySearch(text):
     # storeModel() #-run only oncel to pickling the model
     k = 4  # number of similar vector
@@ -83,3 +107,4 @@ def getCosineSimilarity(question, result):
     questionEmbedding = model.encode([question])
     resultsEmbedding = model.encode([result])
     return(cosine_similarity(questionEmbedding, resultsEmbedding)[0])
+
