@@ -33,8 +33,6 @@ SECRET_KEY = os.environ['SECRET_KEY']
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-
-
 # Application definition
 
 INSTALLED_APPS = [
@@ -50,6 +48,9 @@ INSTALLED_APPS = [
     'rest_framework.authtoken',
     'import_export',
     "corsheaders",
+    'import_export',
+    'corsheaders',
+    'bertApi'
 ]
 
 MIDDLEWARE = [
@@ -83,6 +84,12 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'bertApi.wsgi.application'
+CORS_ORIGIN_WHITELIST = [
+    'http://localhost:3000',
+]
+CSRF_TRUSTED_ORIGINS = ['http://localhost:3000']
+
+# CORS_ORIGIN_ALLOW_ALL = True
 
 # CORS_ORIGIN_ALLOW_ALL = False
 CORS_ORIGIN_WHITELIST = [

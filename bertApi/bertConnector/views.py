@@ -23,6 +23,9 @@ def viewQuestion(request):
     serializeQuestion = QuestionSerializer(questions, many=True)
     return Response(serializeQuestion.data)
 
+@api_view(['GET'])
+def test(request):
+    return HttpResponse("ok")
 
 @api_view(["GET"])
 @authentication_classes([TokenAuthentication])
