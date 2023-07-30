@@ -1,6 +1,6 @@
 Django==4.0.1
 django-cors-headers==4.2.0
-django-import-export==3.2.0
+django_import_export==3.2.0
 djangorestframework==3.13.1
 faiss_cpu==1.7.2
 numpy==1.22.1
