@@ -94,17 +94,4 @@ def getTimeStamp(value):
         currentTimeStampModel = datetime.strptime(value, '%Y-%m-%dT%H:%M:%S.%f%z')
     return currentTimeStampModel
   
-def similaritySearch(text):
-    # storeModel() #-run only oncel to pickling the model
-    k = 4  # number of similar vector
-    xq = model.encode([text])  # query text
-    D, I = index.search(xq, k)
-    #lst = [I[0][idx] for idx, i in enumerate(D[0]) if i < 100]
-    # return np.array(lst)
-    return I[0]
-
-def getCosineSimilarity(question, result):
-    questionEmbedding = model.encode([question])
-    resultsEmbedding = model.encode([result])
-    return(cosine_similarity(questionEmbedding, resultsEmbedding)[0])
 
