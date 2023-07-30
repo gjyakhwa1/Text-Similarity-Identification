@@ -48,8 +48,6 @@ INSTALLED_APPS = [
     'rest_framework.authtoken',
     'import_export',
     "corsheaders",
-    'import_export',
-    'corsheaders',
     'bertApi'
 ]
 
